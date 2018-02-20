@@ -116,23 +116,23 @@ def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
         raise RuntimeException("Unhandled line ending")
     contents = get_contents(file)
     lines = get_lines(file)
-    tmp = tempfile.TemporaryFile()
-    lastline = len(lines) - 1
-    for line_number, line in enumerate(lines):
-        orig_line = line
-        # Do whitespace first to not strip carriage returns:
-        if trim_trailing_whitespace:
-            line = re.sub(r'\s*\n', '\n', line)
-        line = re.sub(r'\r?\n', eol, line)
-        if line_number == lastline and insert_final_newline and '\n' not in line:
-            line += eol
-        if not lines_to_change or line_number in lines_to_change:
-            tmp.write(line)
-        else:
-            tmp.write(orig_line)
-    tmp.seek(0, 0)
-    newcontents = tmp.read()
-    return contents, newcontents
+    with tempfile.TemporaryFile() as tmp:
+        lastline = len(lines) - 1
+        for line_number, line in enumerate(lines):
+            orig_line = line
+            # Do whitespace first to not strip carriage returns:
+            if trim_trailing_whitespace:
+                line = re.sub(r'\s*\n', '\n', line)
+            line = re.sub(r'\r?\n', eol, line)
+            if line_number == lastline and insert_final_newline and '\n' not in line:
+                line += eol
+            if not lines_to_change or line_number in lines_to_change:
+                tmp.write(line)
+            else:
+                tmp.write(orig_line)
+        tmp.seek(0, 0)
+        newcontents = tmp.read()
+        return contents, newcontents
 
 
 modified_files = run(['git', 'ls-files', '-m'])
