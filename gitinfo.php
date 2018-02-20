@@ -11,9 +11,8 @@ if (preg_match('/^Author: (.*)$/m', $commitlog, $matches)) {
 if (preg_match('/^Date: \s*(.*)$/m', $commitlog, $matches)) {
 	$date = $matches[1];
 }
-if (preg_match('/\n\n(.*)/', $commitlog, $matches)) {
-	$message = preg_replace('/^\s{4}/', '', $matches[1]);
-}
+$message = preg_replace('/^(.*)\n\n/ms', '', $commitlog);
+$message = preg_replace('/^\s{4}/m', '', $message);
 
 echo $commit, "\n", $author, "\n", $date, "\n", $message;
 
