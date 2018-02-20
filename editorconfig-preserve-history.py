@@ -159,8 +159,6 @@ for commit, change in changes_by_commit.items():
         line_numbers = change.line_numbers_for_file(changefile)
         options = get_properties(changefile)
         contents, newcontents = run_editorconfig_changes(options, changefile, line_numbers)
-        print(newcontents)
-        sys.exit(1)
         with open(changefile, 'w') as f:
             f.write(newcontents)
     gitinfo.impersonate(change.files())
