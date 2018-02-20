@@ -8,7 +8,6 @@ import tempfile
 from editorconfig import get_properties, EditorConfigError
 
 changes_by_commit = {}
-changes_by_file = {}
 
 
 class RuntimeException(BaseException):
@@ -21,17 +20,17 @@ class Change(object):
         self.changes = {};
         pass
 
-    def add_change(self, file, line_number, line_contents):
+    def add_change(self, file, line_number):
         if file not in self.changes:
             self.changes[file] = []
-        self.changes[file].append((line_number, line_contents))
+        self.changes[file].append(line_number)
 
     def files(self):
         return self.changes.keys()
 
     def line_numbers_for_file(self, file):
         numbers = {};
-        for line_number, line_contents in self.changes[file]:
+        for line_number in self.changes[file]:
             numbers[line_number] = True
         return numbers
 
@@ -89,18 +88,15 @@ def store_changes(changefile, contents, newcontents):
         if commit not in changes_by_commit:
             changes_by_commit[commit] = Change()
 
-        changes_by_commit[commit].add_change(changefile, line_number, newcontents[line_number])
-        if changefile not in changes_by_file:
-            changes_by_file[changefile] = []
-        if commit not in changes_by_file[changefile]:
-            changes_by_file[changefile].append(commit)
+        changes_by_commit[commit].add_change(changefile, line_number)
 
 
-def generate_changes(editorconfigConfig, abspath):
+def generate_changes(editorconfigConfig, abspath, relpath):
     contents, newcontents = run_editorconfig_changes(editorconfigConfig, abspath)
     if newcontents == contents:
         # no changes:
         return
+    print("Changing " + relpath)
     store_changes(abspath, contents, newcontents)
 
 
@@ -147,12 +143,10 @@ for changefile in files:
     try:
         abspath = os.path.abspath(changefile)
         options = get_properties(abspath)
-        generate_changes(options, abspath)
+        generate_changes(options, abspath, changefile)
     except EditorConfigError:
         print("Error occurred while getting EditorConfig properties")
-    # else:
-    #     for key, value in options.items():
-    #         print "%s=%s" % (key, value)
+
 
 # Generate the commits:
 for commit, change in changes_by_commit.items():
