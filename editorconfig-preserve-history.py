@@ -68,7 +68,7 @@ def extract_git_info(commit):
     commit = rawinfo[0]
     author = rawinfo[1]
     date = rawinfo[2]
-    message = rawinfo[3:]
+    message = "\n".join(rawinfo[3:])
     return GitInfo(commit, author, date, message)
 
 
