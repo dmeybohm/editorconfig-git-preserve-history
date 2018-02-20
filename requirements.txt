@@ -1,1 +1,1 @@
--e git://github.com/editorconfig/editorconfig-core-py.git#egg=editorconfig
+-e git://github.com/editorconfig/editorconfig-core-py.git#egg=editorconfig@9a3c7b30511e06a011653cd34f69bdefcf0380db
