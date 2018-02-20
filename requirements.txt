@@ -1,0 +1,1 @@
+-e git://github.com/editorconfig/editorconfig-core-py.git#egg=editorconfig

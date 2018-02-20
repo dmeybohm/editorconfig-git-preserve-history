@@ -1,12 +1,23 @@
 #!/usr/bin/env python
 
-import os
 import subprocess
+import os
+from editorconfig import get_properties, EditorConfigError
 
 def run(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     output = proc.communicate()[0]
-    return output
+    return output.split("\n")
 
-files = run("git ls-files")
-print(files)
+
+for file in run(['git', 'ls-files']):
+    if file == "":
+        continue
+    print("file: "+file)
+    try:
+        options = get_properties(os.path.abspath(file))
+    except EditorConfigError:
+        print "Error occurred while getting EditorConfig properties"
+    else:
+        for key, value in options.items():
+            print "%s=%s" % (key, value)
