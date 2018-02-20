@@ -137,7 +137,9 @@ def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
 
 modified_files = run(['git', 'ls-files', '-m'])
 if len(modified_files) > 0:
-    print("You have modified files!\n\nOnly run this script on a pristine tree")
+    print("You have modified files!\n\nOnly run this script on a pristine tree.")
+    print(modified_files)
+    print(len(modified_files))
     sys.exit(1)
 files = run(['git', 'ls-files'])
 for changefile in files:
