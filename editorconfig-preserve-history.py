@@ -11,6 +11,10 @@ changes_by_commit = {}
 changes_by_file = {}
 
 
+class RuntimeException(BaseException):
+    pass
+
+
 class Change(object):
 
     def __init__(self):
@@ -18,16 +22,29 @@ class Change(object):
         pass
 
     def add_change(self, file, line_number, line_contents):
-        if not file in self.changes:
+        print("adding change to file: "+file)
+        if file not in self.changes:
             self.changes[file] = []
         self.changes[file].append((line_number, line_contents))
 
     def files(self):
         return self.changes.keys()
 
+    def line_numbers_for_file(self, file):
+        numbers = {};
+        for line_number, line_contents in self.changes[file]:
+            numbers[line_number] = True
+        return numbers
 
-class RuntimeException(BaseException):
-    pass
+
+class GitInfo(object):
+    def __init__(self, commitlog):
+        print(commitlog)
+        self.commit = re.match(commitlog, r'^commit (\S+)$').group()
+        self.author = re.match(commitlog, r'^Author: ([^\n]+)').group()
+        self.date = re.match(commitlog, r'^Date: \s*([^\n]+)').group()
+        message = re.match(commitlog, r'^\n\n(.*)').group()
+        self.message = re.sub(message, '^\s{4}', '')
 
 
 def run(cmd):
@@ -37,21 +54,27 @@ def run(cmd):
 
 
 def get_contents(filepath):
-    with open(file, "r") as f:
+    with open(changefile, "r") as f:
         return f.read()
 
+
+def extract_git_info(commit):
+    lines = run(['git', 'log', '-1', commit])
+    return GitInfo("\n".join(lines))
+
+
 def get_lines(filepath):
-    with open(file, "r") as f:
+    with open(changefile, "r") as f:
         return f.readlines()
 
 
-def store_changes(file, contents, newcontents):
-    blame = run(['git', 'blame', file])
+def store_changes(changefile, contents, newcontents):
+    blame = run(['git', 'blame', changefile])
     for line_number, line in enumerate(blame):
         if line == "":
             continue
         print("Line: "+line)
-        match = re.match(r'^(\S+) ', line)
+        match = re.match(r'^(\S+)', line)
         if not match:
             print("Bad match:" + str(len(line)))
 
@@ -59,19 +82,20 @@ def store_changes(file, contents, newcontents):
         commit = match.group()
         if commit not in changes_by_commit:
             changes_by_commit[commit] = Change()
-        changes_by_commit[commit].add_change(file, line_number, newcontents[line_number])
-        if file not in changes_by_file:
-            changes_by_file[file] = []
-        if commit not in changes_by_file[file]:
-            changes_by_file[file].append(commit)
+
+        changes_by_commit[commit].add_change(changefile, line_number, newcontents[line_number])
+        if changefile not in changes_by_file:
+            changes_by_file[changefile] = []
+        if commit not in changes_by_file[changefile]:
+            changes_by_file[changefile].append(commit)
 
 
-def generate_changes(editorconfigConfig, file):
-    contents, newcontents = run_editorconfig_changes(editorconfigConfig, file)
+def generate_changes(editorconfigConfig, abspath):
+    contents, newcontents = run_editorconfig_changes(editorconfigConfig, abspath)
     if newcontents == contents:
         # no changes:
         return
-    store_changes(file, contents, newcontents)
+    store_changes(abspath, contents, newcontents)
 
 
 def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
@@ -103,11 +127,11 @@ def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
 
 
 files = run(['git', 'ls-files'])
-for file in files:
-    if file == "":
+for changefile in files:
+    if changefile == "":
         continue
     try:
-        abspath = os.path.abspath(file)
+        abspath = os.path.abspath(changefile)
         options = get_properties(abspath)
         generate_changes(options, abspath)
     except EditorConfigError:
@@ -118,7 +142,18 @@ for file in files:
 
 # Generate the commits:
 for commit, change in changes_by_commit.items():
-    for file in change.files():
-        print("file: "+file)
+    # get info for the commit:
+    print(len(commit))
+    gitinfo = extract_git_info(commit)
+    print(gitinfo)
+    sys.exit(1);
+    print("commit: " + commit)
+    for changefile in change.files():
+        line_numbers = change.line_numbers_for_file(changefile)
+        options = get_properties(changefile)
+        contents, newcontents = run_editorconfig_changes(options, changefile, line_numbers)
+        with open(changefile, 'w') as f:
+            f.write(newcontents)
+
 
 
