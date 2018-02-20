@@ -38,13 +38,11 @@ class Change(object):
 
 
 class GitInfo(object):
-    def __init__(self, commitlog):
-        print(commitlog)
-        self.commit = re.match(commitlog, r'^commit (\S+)$').group()
-        self.author = re.match(commitlog, r'^Author: ([^\n]+)').group()
-        self.date = re.match(commitlog, r'^Date: \s*([^\n]+)').group()
-        message = re.match(commitlog, r'^\n\n(.*)').group()
-        self.message = re.sub(message, '^\s{4}', '')
+    def __init__(self, commit, author, date, message):
+        self.commit = commit
+        self.author = author
+        self.date = date
+        self.message = message
 
 
 def run(cmd):
@@ -60,7 +58,13 @@ def get_contents(filepath):
 
 def extract_git_info(commit):
     lines = run(['git', 'log', '-1', commit])
-    return GitInfo("\n".join(lines))
+    info = "\n".join(lines).replace("'", "\\'")
+    rawinfo = run(['./gitinfo.php', info])
+    commit = rawinfo[0]
+    author = rawinfo[1]
+    date = rawinfo[2]
+    message = rawinfo[3:]
+    return GitInfo(commit, author, date, message)
 
 
 def get_lines(filepath):
@@ -73,11 +77,9 @@ def store_changes(changefile, contents, newcontents):
     for line_number, line in enumerate(blame):
         if line == "":
             continue
-        print("Line: "+line)
         match = re.match(r'^(\S+)', line)
         if not match:
             print("Bad match:" + str(len(line)))
-
             raise RuntimeException("Bad match in git blame")
         commit = match.group()
         if commit not in changes_by_commit:
@@ -143,7 +145,6 @@ for changefile in files:
 # Generate the commits:
 for commit, change in changes_by_commit.items():
     # get info for the commit:
-    print(len(commit))
     gitinfo = extract_git_info(commit)
     print(gitinfo)
     sys.exit(1);
