@@ -120,6 +120,7 @@ def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
     tmp = tempfile.TemporaryFile()
     lastline = len(lines) - 1
     for line_number, line in enumerate(lines):
+        orig_line = line
         # Do whitespace first to not strip carriage returns:
         if trim_trailing_whitespace:
             line = re.sub(r'\s*\n', '\n', line)
@@ -128,6 +129,8 @@ def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
             line += eol
         if not lines_to_change or line_number in lines_to_change:
             tmp.write(line)
+        else:
+            tmp.write(orig_line)
     tmp.seek(0, 0)
     newcontents = tmp.read()
     return contents, newcontents
@@ -155,6 +158,8 @@ for commit, change in changes_by_commit.items():
         line_numbers = change.line_numbers_for_file(changefile)
         options = get_properties(changefile)
         contents, newcontents = run_editorconfig_changes(options, changefile, line_numbers)
+        print(newcontents)
+        sys.exit(1)
         with open(changefile, 'w') as f:
             f.write(newcontents)
     gitinfo.impersonate(change.files())
