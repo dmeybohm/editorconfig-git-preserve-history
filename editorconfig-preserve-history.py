@@ -2,7 +2,10 @@
 
 import subprocess
 import os
+import changewhitespace
+
 from editorconfig import get_properties, EditorConfigError
+
 
 def run(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -15,7 +18,9 @@ for file in run(['git', 'ls-files']):
         continue
     print("file: "+file)
     try:
-        options = get_properties(os.path.abspath(file))
+        abspath = os.path.abspath(file)
+        options = get_properties(abspath)
+        changewhitespace.apply_changes(options, abspath)
     except EditorConfigError:
         print "Error occurred while getting EditorConfig properties"
     else:
