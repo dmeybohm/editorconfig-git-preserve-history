@@ -44,6 +44,11 @@ class GitInfo(object):
         self.date = date
         self.message = message
 
+    def impersonate(self, files):
+        message = self.message + "\nFrom-Commit: " + self.commit
+        output = run(['git', 'commit', '--date', self.date, '--author', self.author, '--message', message])
+        print(output)
+        sys.exit(1)
 
 def run(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -58,7 +63,7 @@ def get_contents(filepath):
 
 def extract_git_info(commit):
     lines = run(['git', 'log', '-1', commit])
-    info = "\n".join(lines).replace("'", "\\'")
+    info = "\n".join(lines)
     rawinfo = run(['./gitinfo.php', info])
     commit = rawinfo[0]
     author = rawinfo[1]
@@ -146,15 +151,13 @@ for changefile in files:
 for commit, change in changes_by_commit.items():
     # get info for the commit:
     gitinfo = extract_git_info(commit)
-    print(gitinfo)
-    sys.exit(1);
-    print("commit: " + commit)
     for changefile in change.files():
         line_numbers = change.line_numbers_for_file(changefile)
         options = get_properties(changefile)
         contents, newcontents = run_editorconfig_changes(options, changefile, line_numbers)
         with open(changefile, 'w') as f:
             f.write(newcontents)
+    gitinfo.impersonate()
 
 
 
