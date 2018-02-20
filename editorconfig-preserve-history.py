@@ -48,8 +48,6 @@ class GitInfo(object):
         message = self.message + "\nFrom-Commit: " + self.commit
         args = ['git', 'commit', '--date', self.date, '--author', self.author, '--message', message]
         output = run(args + files)
-        print(output)
-        sys.exit(1)
 
 def run(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
