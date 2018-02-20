@@ -126,7 +126,7 @@ def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
         line = re.sub(r'\r?\n', eol, line)
         if line_number == lastline and insert_final_newline and '\n' not in line:
             line += eol
-        if not lines_to_change or lines_to_change[line_number]:
+        if not lines_to_change or line_number in lines_to_change:
             tmp.write(line)
     tmp.seek(0, 0)
     newcontents = tmp.read()
