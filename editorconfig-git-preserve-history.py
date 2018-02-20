@@ -45,6 +45,7 @@ class GitInfo(object):
         self.message = message
 
     def impersonate(self, files):
+        print("Overwriting " + self.commit + "(Impersonating " + self.author+ ")")
         message = self.message + "\n\nFrom-Commit: " + self.commit
         args = ['git', 'commit', '--date', self.date, '--author', self.author, '--message', message]
         output = run(args + files)
