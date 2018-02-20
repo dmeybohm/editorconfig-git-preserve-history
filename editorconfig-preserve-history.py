@@ -46,7 +46,8 @@ class GitInfo(object):
 
     def impersonate(self, files):
         message = self.message + "\nFrom-Commit: " + self.commit
-        output = run(['git', 'commit', '--date', self.date, '--author', self.author, '--message', message])
+        args = ['git', 'commit', '--date', self.date, '--author', self.author, '--message', message]
+        output = run(args + files)
         print(output)
         sys.exit(1)
 
