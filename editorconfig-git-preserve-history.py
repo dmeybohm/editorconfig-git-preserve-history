@@ -22,7 +22,6 @@ class Change(object):
         pass
 
     def add_change(self, file, line_number, line_contents):
-        print("adding change to file: "+file)
         if file not in self.changes:
             self.changes[file] = []
         self.changes[file].append((line_number, line_contents))
@@ -45,7 +44,7 @@ class GitInfo(object):
         self.message = message
 
     def impersonate(self, files):
-        print("Overwriting " + self.commit + "(Impersonating " + self.author+ ")")
+        print("Overwriting " + self.commit + " (Impersonating " + self.author+ ")")
         message = self.message + "\n\nFrom-Commit: " + self.commit
         args = ['git', 'commit', '--date', self.date, '--author', self.author, '--message', message]
         output = run(args + files)
