@@ -2,13 +2,28 @@
 
 import subprocess
 import os
-import Change
 import re
 import sys
 import tempfile
 from editorconfig import get_properties, EditorConfigError
 
-commits = {}
+changes_by_commit = {}
+changes_by_file = {}
+
+
+class Change(object):
+
+    def __init__(self):
+        self.changes = {};
+        pass
+
+    def add_change(self, file, line_number, line_contents):
+        if not file in self.changes:
+            self.changes[file] = []
+        self.changes[file].append((line_number, line_contents))
+
+    def files(self):
+        return self.changes.keys()
 
 
 class RuntimeException(BaseException):
@@ -41,8 +56,14 @@ def store_changes(file, contents, newcontents):
             print("Bad match:" +str(len(line)))
 
             raise RuntimeException("Bad match in git blame")
-        group = match.lastgroup
-        print(group)
+        commit = match.group()
+        if commit not in changes_by_commit:
+            changes_by_commit[commit] = Change()
+        changes_by_commit[commit].add_change(file, line_number, newcontents[line_number])
+        if file not in changes_by_file:
+            changes_by_file[file] = []
+        if commit not in changes_by_file[file]:
+            changes_by_file[file].append(commit)
 
 
 def generate_changes(editorconfigConfig, file):
@@ -97,6 +118,7 @@ for file in files:
             print "%s=%s" % (key, value)
 
 # Generate the commits:
-for file in files:
-    pass
+for commit, change in changes_by_commit.items():
+    print(commit)
+
 
