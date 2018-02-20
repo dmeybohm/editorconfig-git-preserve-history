@@ -53,7 +53,7 @@ def store_changes(file, contents, newcontents):
         print("Line: "+line)
         match = re.match(r'^(\S+) ', line)
         if not match:
-            print("Bad match:" +str(len(line)))
+            print("Bad match:" + str(len(line)))
 
             raise RuntimeException("Bad match in git blame")
         commit = match.group()
@@ -68,7 +68,6 @@ def store_changes(file, contents, newcontents):
 
 def generate_changes(editorconfigConfig, file):
     contents, newcontents = run_editorconfig_changes(editorconfigConfig, file)
-    print("file: "+file+": "+str(len(newcontents)))
     if newcontents == contents:
         # no changes:
         return
@@ -112,13 +111,14 @@ for file in files:
         options = get_properties(abspath)
         generate_changes(options, abspath)
     except EditorConfigError:
-        print "Error occurred while getting EditorConfig properties"
-    else:
-        for key, value in options.items():
-            print "%s=%s" % (key, value)
+        print("Error occurred while getting EditorConfig properties")
+    # else:
+    #     for key, value in options.items():
+    #         print "%s=%s" % (key, value)
 
 # Generate the commits:
 for commit, change in changes_by_commit.items():
-    print(commit)
+    for file in change.files():
+        print("file: "+file)
 
 
