@@ -6,9 +6,7 @@ import sys
 import tempfile
 from editorconfig import get_properties, EditorConfigError
 
-from util import (
-    run, get_contents, get_lines
-)
+from util import run, get_contents, get_lines
 from gitcommit import GitCommitInfo
 
 changes_by_commit = {}
