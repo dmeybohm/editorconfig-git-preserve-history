@@ -61,13 +61,13 @@ def run(cmd):
     return output.split("\n")
 
 
-def get_contents(filepath):
-    with open(filepath, "r") as f:
+def get_contents(file_path):
+    with open(file_path, "r") as f:
         return f.read()
 
 
-def get_lines(filepath):
-    with open(filepath, "r") as f:
+def get_lines(file_path):
+    with open(file_path, "r") as f:
         return f.readlines()
 
 
@@ -95,7 +95,7 @@ def generate_changes(editorconfig_config, abspath, relpath):
     store_changes(abspath)
 
 
-def run_editorconfig_changes(editorconfig_config, file, lines_to_change={}):
+def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={}):
     end_of_line = editorconfig_config['end_of_line']
     trim_trailing_whitespace = editorconfig_config['trim_trailing_whitespace']
     insert_final_newline = editorconfig_config['insert_final_newline']
@@ -105,8 +105,8 @@ def run_editorconfig_changes(editorconfig_config, file, lines_to_change={}):
         eol = '\r\n'
     else:
         raise RuntimeException("Unhandled line ending")
-    old_contents = get_contents(file)
-    lines = get_lines(file)
+    old_contents = get_contents(file_path)
+    lines = get_lines(file_path)
     with tempfile.TemporaryFile() as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
