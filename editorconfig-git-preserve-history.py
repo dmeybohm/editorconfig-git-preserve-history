@@ -75,7 +75,7 @@ def get_lines(filepath):
         return f.readlines()
 
 
-def store_changes(change_file, contents, newcontents):
+def store_changes(change_file):
     blame = run(['git', 'blame', change_file])
     for line_number, line in enumerate(blame):
         if line == "":
@@ -96,13 +96,13 @@ def generate_changes(editorconfigConfig, abspath, relpath):
         # no changes:
         return
     print("Changing " + relpath)
-    store_changes(abspath, contents, newcontents)
+    store_changes(abspath)
 
 
-def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
-    end_of_line = editorconfigConfig['end_of_line']
-    trim_trailing_whitespace = editorconfigConfig['trim_trailing_whitespace']
-    insert_final_newline = editorconfigConfig['insert_final_newline']
+def run_editorconfig_changes(editorconfig_config, file, lines_to_change={}):
+    end_of_line = editorconfig_config['end_of_line']
+    trim_trailing_whitespace = editorconfig_config['trim_trailing_whitespace']
+    insert_final_newline = editorconfig_config['insert_final_newline']
     if end_of_line == "lf":
         eol = '\n'
     elif end_of_line == "crlf":
