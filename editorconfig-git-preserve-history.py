@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
-import subprocess
 import os
 import re
 import sys
 import tempfile
 from editorconfig import get_properties, EditorConfigError
+
+from util import (
+    run, get_contents, get_lines
+)
+from gitcommit import GitCommitInfo
 
 changes_by_commit = {}
 
@@ -28,47 +32,6 @@ class Change(object):
 
     def line_numbers_for_file(self, file_path):
         return {line_number: True for line_number in self.changes[file_path]}
-
-
-class GitInfo(object):
-    def __init__(self, commit, author, date, message):
-        self.commit = commit
-        self.author = author
-        self.date = date
-        self.message = message
-
-    @classmethod
-    def from_commit(cls, commit):
-        lines = run(['git', 'log', '-1', commit])
-        info = "\n".join(lines)
-        rawinfo = run(['./gitinfo.php', info])
-        commit = rawinfo[0]
-        author = rawinfo[1]
-        date = rawinfo[2]
-        message = "\n".join(rawinfo[3:])
-        return GitInfo(commit, author, date, message)
-
-    def impersonate_and_write_commit(self, files):
-        print("Overwriting " + self.commit + " (Impersonating " + self.author + ")")
-        message = self.message + "\n\nFrom-Commit: " + self.commit
-        args = ['git', 'commit', '--date', self.date, '--author', self.author, '--message', message]
-        output = run(args + files)
-
-
-def run(cmd):
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    output = proc.communicate()[0]
-    return output.split("\n")
-
-
-def get_contents(file_path):
-    with open(file_path, "r") as f:
-        return f.read()
-
-
-def get_lines(file_path):
-    with open(file_path, "r") as f:
-        return f.readlines()
 
 
 def store_changes(change_file):
@@ -145,7 +108,7 @@ def find_and_write_commits():
     # Generate the commits:
     for commit, change in changes_by_commit.items():
         # get info for the commit:
-        gitinfo = GitInfo.from_commit(commit)
+        gitinfo = GitCommitInfo.from_commit(commit)
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
             editorconfig_options = get_properties(change_file)
