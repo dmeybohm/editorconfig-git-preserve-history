@@ -28,7 +28,7 @@ class Change(object):
         return self.changes.keys()
 
     def line_numbers_for_file(self, file):
-        numbers = {};
+        numbers = {}
         for line_number in self.changes[file]:
             numbers[line_number] = True
         return numbers
@@ -52,8 +52,8 @@ class GitInfo(object):
         message = "\n".join(rawinfo[3:])
         return GitInfo(commit, author, date, message)
 
-    def impersonate(self, files):
-        print("Overwriting " + self.commit + " (Impersonating " + self.author+ ")")
+    def impersonate_and_write_commit(self, files):
+        print("Overwriting " + self.commit + " (Impersonating " + self.author + ")")
         message = self.message + "\n\nFrom-Commit: " + self.commit
         args = ['git', 'commit', '--date', self.date, '--author', self.author, '--message', message]
         output = run(args + files)
@@ -66,17 +66,17 @@ def run(cmd):
 
 
 def get_contents(filepath):
-    with open(changefile, "r") as f:
+    with open(filepath, "r") as f:
         return f.read()
 
 
 def get_lines(filepath):
-    with open(changefile, "r") as f:
+    with open(filepath, "r") as f:
         return f.readlines()
 
 
-def store_changes(changefile, contents, newcontents):
-    blame = run(['git', 'blame', changefile])
+def store_changes(change_file, contents, newcontents):
+    blame = run(['git', 'blame', change_file])
     for line_number, line in enumerate(blame):
         if line == "":
             continue
@@ -87,8 +87,7 @@ def store_changes(changefile, contents, newcontents):
         commit = match.group()
         if commit not in changes_by_commit:
             changes_by_commit[commit] = Change()
-
-        changes_by_commit[commit].add_change(changefile, line_number)
+        changes_by_commit[commit].add_change(change_file, line_number)
 
 
 def generate_changes(editorconfigConfig, abspath, relpath):
@@ -157,7 +156,7 @@ def find_and_write_commits():
             contents, newcontents = run_editorconfig_changes(options, change_file, line_numbers)
             with open(change_file, 'w') as f:
                 f.write(newcontents)
-        gitinfo.impersonate(change.files())
+        gitinfo.impersonate_and_write_commit(change.files())
 
 
 if __name__ == "__main__":
