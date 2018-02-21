@@ -43,13 +43,6 @@ class GitCommitTest(unittest.TestCase):
         message = gitcommit.match_message(test_commit)
         self.assertEquals(commit_message, message)
 
-    def test_match_parts(self):
-        commit, author, date, message = gitcommit.match_parts(test_commit)
-        self.assertIsNotNone(commit)
-        self.assertIsNotNone(author)
-        self.assertIsNotNone(date)
-        self.assertIsNotNone(message)
-
 
 if __name__ == "__main__":
     unittest.main()
