@@ -16,7 +16,7 @@ class RuntimeException(BaseException):
 
 class Change(object):
     def __init__(self):
-        self.changes = {};
+        self.changes = {}
         pass
 
     def add_change(self, file, line_number):
@@ -109,25 +109,25 @@ def run_editorconfig_changes(editorconfig_config, file, lines_to_change={}):
         eol = '\r\n'
     else:
         raise RuntimeException("Unhandled line ending")
-    contents = get_contents(file)
+    old_contents = get_contents(file)
     lines = get_lines(file)
     with tempfile.TemporaryFile() as tmp:
         lastline = len(lines) - 1
-        for line_number, line in enumerate(lines):
-            orig_line = line
+        for line_number, orig_line in enumerate(lines):
+            modified_line = orig_line
             # Do whitespace first to not strip carriage returns:
             if trim_trailing_whitespace:
-                line = re.sub(r'\s*\n', '\n', line)
-            line = re.sub(r'\r?\n', eol, line)
-            if line_number == lastline and insert_final_newline and '\n' not in line:
-                line += eol
+                modified_line = re.sub(r'\s*\n', '\n', modified_line)
+            modified_line = re.sub(r'\r?\n', eol, modified_line)
+            if line_number == lastline and insert_final_newline and '\n' not in modified_line:
+                modified_line += eol
             if not lines_to_change or line_number in lines_to_change:
-                tmp.write(line)
+                tmp.write(modified_line)
             else:
                 tmp.write(orig_line)
         tmp.seek(0, 0)
-        newcontents = tmp.read()
-        return contents, newcontents
+        new_contents = tmp.read()
+        return old_contents, new_contents
 
 
 def find_and_write_commits():
@@ -142,8 +142,8 @@ def find_and_write_commits():
             continue
         try:
             abspath = os.path.abspath(change_file)
-            options = get_properties(abspath)
-            generate_changes(options, abspath, change_file)
+            editorconfig_options = get_properties(abspath)
+            generate_changes(editorconfig_options, abspath, change_file)
         except EditorConfigError:
             print("Error occurred while getting EditorConfig properties")
     # Generate the commits:
@@ -152,10 +152,10 @@ def find_and_write_commits():
         gitinfo = GitInfo.from_commit(commit)
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
-            options = get_properties(change_file)
-            contents, newcontents = run_editorconfig_changes(options, change_file, line_numbers)
+            editorconfig_options = get_properties(change_file)
+            old_contents, new_contents = run_editorconfig_changes(editorconfig_options, change_file, line_numbers)
             with open(change_file, 'w') as f:
-                f.write(newcontents)
+                f.write(new_contents)
         gitinfo.impersonate_and_write_commit(change.files())
 
 
