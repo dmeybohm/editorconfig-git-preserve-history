@@ -17,6 +17,7 @@ And test big message..
 Fix gitinfo.php
 """
 
+
 class GitCommitTest(unittest.TestCase):
     def test_match_commit(self):
         commit = gitcommit.match_commit(test_commit)
@@ -48,6 +49,7 @@ class GitCommitTest(unittest.TestCase):
         self.assertIsNotNone(author)
         self.assertIsNotNone(date)
         self.assertIsNotNone(message)
+
 
 if __name__ == "__main__":
     unittest.main()
