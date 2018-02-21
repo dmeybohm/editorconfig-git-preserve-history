@@ -17,21 +17,17 @@ class RuntimeException(BaseException):
 class Change(object):
     def __init__(self):
         self.changes = {}
-        pass
 
-    def add_change(self, file, line_number):
-        if file not in self.changes:
-            self.changes[file] = []
-        self.changes[file].append(line_number)
+    def add_change(self, file_path, line_number):
+        if file_path not in self.changes:
+            self.changes[file_path] = []
+        self.changes[file_path].append(line_number)
 
     def files(self):
         return self.changes.keys()
 
-    def line_numbers_for_file(self, file):
-        numbers = {}
-        for line_number in self.changes[file]:
-            numbers[line_number] = True
-        return numbers
+    def line_numbers_for_file(self, file_path):
+        return {line_number: True for line_number in self.changes[file_path]}
 
 
 class GitInfo(object):
@@ -90,8 +86,8 @@ def store_changes(change_file):
         changes_by_commit[commit].add_change(change_file, line_number)
 
 
-def generate_changes(editorconfigConfig, abspath, relpath):
-    contents, newcontents = run_editorconfig_changes(editorconfigConfig, abspath)
+def generate_changes(editorconfig_config, abspath, relpath):
+    contents, newcontents = run_editorconfig_changes(editorconfig_config, abspath)
     if newcontents == contents:
         # no changes:
         return
@@ -112,14 +108,14 @@ def run_editorconfig_changes(editorconfig_config, file, lines_to_change={}):
     old_contents = get_contents(file)
     lines = get_lines(file)
     with tempfile.TemporaryFile() as tmp:
-        lastline = len(lines) - 1
+        last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
             modified_line = orig_line
             # Do whitespace first to not strip carriage returns:
             if trim_trailing_whitespace:
                 modified_line = re.sub(r'\s*\n', '\n', modified_line)
             modified_line = re.sub(r'\r?\n', eol, modified_line)
-            if line_number == lastline and insert_final_newline and '\n' not in modified_line:
+            if line_number == last_line and insert_final_newline and '\n' not in modified_line:
                 modified_line += eol
             if not lines_to_change or line_number in lines_to_change:
                 tmp.write(modified_line)
