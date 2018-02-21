@@ -15,7 +15,6 @@ class RuntimeException(BaseException):
 
 
 class Change(object):
-
     def __init__(self):
         self.changes = {};
         pass
@@ -42,11 +41,23 @@ class GitInfo(object):
         self.date = date
         self.message = message
 
+    @classmethod
+    def from_commit(cls, commit):
+        lines = run(['git', 'log', '-1', commit])
+        info = "\n".join(lines)
+        rawinfo = run(['./gitinfo.php', info])
+        commit = rawinfo[0]
+        author = rawinfo[1]
+        date = rawinfo[2]
+        message = "\n".join(rawinfo[3:])
+        return GitInfo(commit, author, date, message)
+
     def impersonate(self, files):
         print("Overwriting " + self.commit + " (Impersonating " + self.author+ ")")
         message = self.message + "\n\nFrom-Commit: " + self.commit
         args = ['git', 'commit', '--date', self.date, '--author', self.author, '--message', message]
         output = run(args + files)
+
 
 def run(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -57,17 +68,6 @@ def run(cmd):
 def get_contents(filepath):
     with open(changefile, "r") as f:
         return f.read()
-
-
-def extract_git_info(commit):
-    lines = run(['git', 'log', '-1', commit])
-    info = "\n".join(lines)
-    rawinfo = run(['./gitinfo.php', info])
-    commit = rawinfo[0]
-    author = rawinfo[1]
-    date = rawinfo[2]
-    message = "\n".join(rawinfo[3:])
-    return GitInfo(commit, author, date, message)
 
 
 def get_lines(filepath):
@@ -131,34 +131,34 @@ def run_editorconfig_changes(editorconfigConfig, file, lines_to_change={}):
         return contents, newcontents
 
 
-modified_files = run(['git', 'ls-files', '-m'])
-if modified_files[0] != '' or len(modified_files) > 1:
-    print("You have modified files!\n\nOnly run this script on a pristine tree.")
-    print(modified_files)
-    sys.exit(1)
-files = run(['git', 'ls-files'])
-for changefile in files:
-    if changefile == "":
-        continue
-    try:
-        abspath = os.path.abspath(changefile)
-        options = get_properties(abspath)
-        generate_changes(options, abspath, changefile)
-    except EditorConfigError:
-        print("Error occurred while getting EditorConfig properties")
+def find_and_write_commits():
+    modified_files = run(['git', 'ls-files', '-m'])
+    if modified_files[0] != '' or len(modified_files) > 1:
+        print("You have modified files!\n\nOnly run this script on a pristine tree.")
+        print(modified_files)
+        sys.exit(1)
+    files = run(['git', 'ls-files'])
+    for change_file in files:
+        if change_file == "":
+            continue
+        try:
+            abspath = os.path.abspath(change_file)
+            options = get_properties(abspath)
+            generate_changes(options, abspath, change_file)
+        except EditorConfigError:
+            print("Error occurred while getting EditorConfig properties")
+    # Generate the commits:
+    for commit, change in changes_by_commit.items():
+        # get info for the commit:
+        gitinfo = GitInfo.from_commit(commit)
+        for change_file in change.files():
+            line_numbers = change.line_numbers_for_file(change_file)
+            options = get_properties(change_file)
+            contents, newcontents = run_editorconfig_changes(options, change_file, line_numbers)
+            with open(change_file, 'w') as f:
+                f.write(newcontents)
+        gitinfo.impersonate(change.files())
 
 
-# Generate the commits:
-for commit, change in changes_by_commit.items():
-    # get info for the commit:
-    gitinfo = extract_git_info(commit)
-    for changefile in change.files():
-        line_numbers = change.line_numbers_for_file(changefile)
-        options = get_properties(changefile)
-        contents, newcontents = run_editorconfig_changes(options, changefile, line_numbers)
-        with open(changefile, 'w') as f:
-            f.write(newcontents)
-    gitinfo.impersonate(change.files())
-
-
-
+if __name__ == "__main__":
+    find_and_write_commits()
