@@ -50,8 +50,8 @@ def store_changes(change_file):
 
 
 def generate_changes(editorconfig_config, abspath, relpath):
-    contents, newcontents = run_editorconfig_changes(editorconfig_config, abspath)
-    if newcontents == contents:
+    old_contents, new_contents = run_editorconfig_changes(editorconfig_config, abspath)
+    if new_contents == old_contents:
         # no changes:
         return
     print("Changing " + relpath)
