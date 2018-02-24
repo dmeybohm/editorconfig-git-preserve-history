@@ -13,11 +13,7 @@ from gitcommit import GitCommitInfo
 changes_by_commit = {}
 
 
-class RuntimeException(BaseException):
-    pass
-
-
-class Change(object):
+class Change:
     def __init__(self):
         self.changes = {}
 
@@ -33,7 +29,7 @@ class Change(object):
         return {line_number: True for line_number in self.changes[file_path]}
 
 
-def store_changes(change_file):
+def store_changes(change_file: str):
     blame = run(['git', 'blame', change_file])
     for line_number, line in enumerate(blame):
         if line == "":
@@ -41,7 +37,7 @@ def store_changes(change_file):
         match = re.match(r'^(\S+)', line)
         if not match:
             print("Bad match:" + str(len(line)))
-            raise RuntimeException("Bad match in git blame")
+            raise RuntimeError("Bad match in git blame")
         commit = match.group()
         if commit not in changes_by_commit:
             changes_by_commit[commit] = Change()
@@ -66,7 +62,7 @@ def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={})
     elif end_of_line == "crlf":
         eol = '\r\n'
     else:
-        raise RuntimeException("Unhandled line ending")
+        raise RuntimeError("Unhandled line ending")
     old_contents = get_contents(file_path)
     lines = get_lines(file_path)
     with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as tmp:
