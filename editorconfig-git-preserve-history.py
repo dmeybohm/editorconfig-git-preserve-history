@@ -68,7 +68,7 @@ def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={})
         raise RuntimeException("Unhandled line ending")
     old_contents = get_contents(file_path)
     lines = get_lines(file_path)
-    with tempfile.TemporaryFile() as tmp:
+    with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
             modified_line = orig_line
