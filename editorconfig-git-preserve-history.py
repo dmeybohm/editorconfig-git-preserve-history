@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import tempfile
+
 from editorconfig import get_properties, EditorConfigError
 
 from util import run, get_contents, get_lines
@@ -20,15 +21,15 @@ class Change(object):
     def __init__(self):
         self.changes = {}
 
-    def add_change(self, file_path, line_number):
+    def add_change(self, file_path: str, line_number: int):
         if file_path not in self.changes:
             self.changes[file_path] = []
         self.changes[file_path].append(line_number)
 
-    def files(self):
-        return self.changes.keys()
+    def files(self) -> list:
+        return list(self.changes.keys())
 
-    def line_numbers_for_file(self, file_path):
+    def line_numbers_for_file(self, file_path: str) -> dict:
         return {line_number: True for line_number in self.changes[file_path]}
 
 
@@ -47,7 +48,7 @@ def store_changes(change_file):
         changes_by_commit[commit].add_change(change_file, line_number)
 
 
-def generate_changes(editorconfig_config, abspath, relpath):
+def generate_changes(editorconfig_config: dict, abspath: str, relpath: str):
     old_contents, new_contents = run_editorconfig_changes(editorconfig_config, abspath)
     if new_contents == old_contents:
         # no changes:
