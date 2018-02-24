@@ -1,10 +1,13 @@
 import subprocess
+import locale
 
 
-def run(cmd):
+def run(cmd, encoding=None):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     output = proc.communicate()[0]
-    return output.split("\n")
+    if encoding is None:
+        encoding = locale.getpreferredencoding()
+    return output.decode(encoding).split("\n")
 
 
 def get_contents(file_path):
