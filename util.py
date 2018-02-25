@@ -11,7 +11,7 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
     return output.decode(encoding).split("\n")
 
 
-def get_contents(fe_path: str) -> str:
+def get_contents(file_path: str) -> str:
     with open(file_path, "r") as f:
         return f.read()
 
