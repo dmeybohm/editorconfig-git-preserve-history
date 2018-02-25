@@ -44,7 +44,7 @@ def store_changes(change_file: str):
 
 
 def generate_changes(editorconfig: dict, abspath: str, relpath: str):
-    old_contents, new_contents = run_editorconfig_changes(editorconfig, abspath)
+    old_contents, new_contents = run_changes(editorconfig, abspath)
     if new_contents == old_contents:
         # no changes:
         return
@@ -52,7 +52,8 @@ def generate_changes(editorconfig: dict, abspath: str, relpath: str):
     store_changes(abspath)
 
 
-def run_editorconfig_changes(editorconfig: dict, file_path: str, lines_to_change: Dict[int, bool] = {}):
+def run_changes(editorconfig: dict, file_path: str,
+                lines_to_change: Dict[int, bool] = {}):
     end_of_line = editorconfig['end_of_line']
     trim_trailing_whitespace = editorconfig['trim_trailing_whitespace']
     insert_final_newline = editorconfig['insert_final_newline']
@@ -72,7 +73,8 @@ def run_editorconfig_changes(editorconfig: dict, file_path: str, lines_to_change
             if trim_trailing_whitespace:
                 modified_line = re.sub(r'\s*\n', '\n', modified_line)
             modified_line = re.sub(r'\r?\n', eol, modified_line)
-            if line_number == last_line and insert_final_newline and '\n' not in modified_line:
+            if line_number == last_line and \
+                    insert_final_newline and '\n' not in modified_line:
                 modified_line += eol
             if not lines_to_change or line_number in lines_to_change:
                 tmp.write(modified_line)
@@ -86,7 +88,8 @@ def run_editorconfig_changes(editorconfig: dict, file_path: str, lines_to_change
 def find_and_write_commits():
     modified_files = run(['git', 'ls-files', '-m'])
     if modified_files[0] != '' or len(modified_files) > 1:
-        print("You have modified files!\n\nOnly run this script on a pristine tree.")
+        print("You have modified files!\n\n")
+        print("Only run this script on a pristine tree.")
         print(modified_files)
         sys.exit(1)
     files = run(['git', 'ls-files'])
@@ -106,7 +109,9 @@ def find_and_write_commits():
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
             editorconfig = get_properties(change_file)
-            old_contents, new_contents = run_editorconfig_changes(editorconfig, change_file, line_numbers)
+            old_contents, new_contents = run_changes(editorconfig,
+                                                     change_file,
+                                                     line_numbers)
             with open(change_file, 'w') as f:
                 f.write(new_contents)
         gitinfo.impersonate_and_write_commit(change.files())

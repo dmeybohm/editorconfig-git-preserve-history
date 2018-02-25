@@ -1,6 +1,6 @@
 import subprocess
 import locale
-from typing import List, AnyStr
+from typing import List
 
 
 def run(cmd: List[str], encoding: str = None) -> List[str]:
@@ -19,6 +19,3 @@ def get_contents(file_path: str) -> str:
 def get_lines(file_path: str) -> List[str]:
     with open(file_path, "rt") as f:
         return f.readlines()
-
-
-
