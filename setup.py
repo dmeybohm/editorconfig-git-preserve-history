@@ -1,6 +1,6 @@
 from setuptools import setup
 
-setup(name='editorconfig_git_preserve_history',
+setup(name='EditorConfigGitPreserveHistory',
       version='0.1',
       description='Commit changes to editorconfig and preserve authorship',
       url='http://github.com/dmeybohm/editorconfig-git-preserve-history',

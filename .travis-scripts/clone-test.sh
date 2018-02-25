@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Hidden in a .travis dir to avoid running it outside travis
+
 cat > .editorconfig << EOF
 # editorconfig.org
 root = true
