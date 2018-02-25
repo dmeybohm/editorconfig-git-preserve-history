@@ -20,9 +20,9 @@ class GitCommitInfo:
             author = match_author(commit_log)
             date = match_date(commit_log)
             message = match_message(commit_log)
-        except e:
+        except:
             print("Failed to parse commit log: {}".format(commit_log))
-            raise e
+            raise
         return GitCommitInfo(commit, author, date, message)
 
     def impersonate_and_write_commit(self, files: List[str]) -> None:
