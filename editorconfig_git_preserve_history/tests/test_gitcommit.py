@@ -1,5 +1,6 @@
 import unittest
 import editorconfig_git_preserve_history.gitcommit as gitcommit
+from editorconfig_git_preserve_history.gitcommit import GitCommitInfo
 
 test_commit = """commit 9471e20cebc84f5931c77eb2bf6c8eb004ed2305
 Author: A User <user@example.org>
@@ -42,6 +43,10 @@ class GitCommitTest(unittest.TestCase):
     def test_match_message(self):
         message = gitcommit.match_message(test_commit)
         self.assertEqual(commit_message, message)
+
+    def test_git_commit_info_from_base_commit(self):
+        commit = GitCommitInfo.from_commit("^9725481")
+        self.assertTrue(commit.commit.startswith('9725481'))
 
 
 if __name__ == "__main__":

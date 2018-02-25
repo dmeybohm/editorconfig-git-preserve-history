@@ -13,6 +13,8 @@ class GitCommitInfo:
 
     @classmethod
     def from_commit(cls, commit: str) -> 'GitCommitInfo':
+        if commit.startswith('^'):
+            commit = commit[1:]
         lines = run(['git', 'log', '-1', commit])
         commit_log = "\n".join(lines)
         try:
@@ -20,7 +22,7 @@ class GitCommitInfo:
             author = match_author(commit_log)
             date = match_date(commit_log)
             message = match_message(commit_log)
-        except:
+        except AttributeError:
             print("Failed to parse commit {} for commit log: {}".format(commit, commit_log))
             raise
         return GitCommitInfo(commit, author, date, message)
