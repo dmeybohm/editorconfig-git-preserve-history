@@ -5,7 +5,6 @@ import re
 import sys
 import tempfile
 from typing import Dict, List
-
 from editorconfig import get_properties, EditorConfigError
 
 from util import run, get_contents, get_lines
