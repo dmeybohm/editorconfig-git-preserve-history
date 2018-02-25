@@ -21,7 +21,7 @@ pip install -e .
 git clone . clonetest 
 cd clonetest 
 git checkout -b clone-test 153c40eae86411b674e95235b4a66c8b4ee16024 
-for i in git ls-files
+for i in $(git ls-files)
 do
     git blame "$i"
 done
