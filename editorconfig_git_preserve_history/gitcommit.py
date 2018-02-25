@@ -21,7 +21,7 @@ class GitCommitInfo:
             date = match_date(commit_log)
             message = match_message(commit_log)
         except:
-            print("Failed to parse commit log: {}".format(commit_log))
+            print("Failed to parse commit {} for commit log: {}".format(commit, commit_log))
             raise
         return GitCommitInfo(commit, author, date, message)
 
