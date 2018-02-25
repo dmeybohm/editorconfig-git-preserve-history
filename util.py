@@ -12,12 +12,12 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
 
 
 def get_contents(file_path: str) -> str:
-    with open(file_path, "r") as f:
+    with open(file_path, "rt") as f:
         return f.read()
 
 
 def get_lines(file_path: str) -> List[str]:
-    with open(file_path, "r") as f:
+    with open(file_path, "rt") as f:
         return f.readlines()
 
 
