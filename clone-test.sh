@@ -2,7 +2,7 @@
 
 # Test installing the package with pip-install and then
 # running it on a previous version of its own repository
-pyvenv venv-clonetest
+python -m venv venv-clonetest
 . venv-clonetest/bin/activate
 pip install -r dev-requirements.txt
 pip install -e .
