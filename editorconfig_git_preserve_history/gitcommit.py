@@ -16,10 +16,14 @@ class GitCommitInfo:
     def from_commit(cls, commit: str) -> 'GitCommitInfo':
         lines = run(['git', 'log', '-1', commit])
         commit_log = "\n".join(lines)
-        commit = match_commit(commit_log)
-        author = match_author(commit_log)
-        date = match_date(commit_log)
-        message = match_message(commit_log)
+        try:
+            commit = match_commit(commit_log)
+            author = match_author(commit_log)
+            date = match_date(commit_log)
+            message = match_message(commit_log)
+        except AttributeError as e:
+            print("Failed to parse commit log: {}".format(commit_log))
+            raise e
         return GitCommitInfo(commit, author, date, message)
 
     def impersonate_and_write_commit(self, files: List[str]) -> None:
