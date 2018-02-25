@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import locale
 import os
 import re
 import sys
@@ -65,8 +64,7 @@ def run_editorconfig_changes(editorconfig: dict, file_path: str, lines_to_change
         raise RuntimeError("Unhandled line ending")
     old_contents = get_contents(file_path)
     lines = get_lines(file_path)
-    encoding = locale.getpreferredencoding()
-    with tempfile.TemporaryFile(mode='w+t', encoding=encoding) as tmp:
+    with tempfile.TemporaryFile(mode='w+t') as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
             modified_line = orig_line
