@@ -1,38 +1,34 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 import os
 import re
 import sys
 import tempfile
+from typing import Dict, List
 from editorconfig import get_properties, EditorConfigError
 
 from util import run, get_contents, get_lines
 from gitcommit import GitCommitInfo
 
-changes_by_commit = {}
+changes_by_commit = {}  # type: Dict[str, 'Change']
 
 
-class RuntimeException(BaseException):
-    pass
-
-
-class Change(object):
+class Change:
     def __init__(self):
-        self.changes = {}
+        self.changes = {}  # type: Dict[str, List[int]]
 
-    def add_change(self, file_path, line_number):
+    def add_change(self, file_path: str, line_number: int):
         if file_path not in self.changes:
             self.changes[file_path] = []
         self.changes[file_path].append(line_number)
 
-    def files(self):
-        return self.changes.keys()
+    def files(self) -> List[str]:
+        return list(self.changes.keys())
 
-    def line_numbers_for_file(self, file_path):
+    def line_numbers_for_file(self, file_path: str) -> Dict[int, bool]:
         return {line_number: True for line_number in self.changes[file_path]}
 
 
-def store_changes(change_file):
+def store_changes(change_file: str):
     blame = run(['git', 'blame', change_file])
     for line_number, line in enumerate(blame):
         if line == "":
@@ -40,15 +36,15 @@ def store_changes(change_file):
         match = re.match(r'^(\S+)', line)
         if not match:
             print("Bad match:" + str(len(line)))
-            raise RuntimeException("Bad match in git blame")
+            raise RuntimeError("Bad match in git blame")
         commit = match.group()
         if commit not in changes_by_commit:
             changes_by_commit[commit] = Change()
         changes_by_commit[commit].add_change(change_file, line_number)
 
 
-def generate_changes(editorconfig_config, abspath, relpath):
-    old_contents, new_contents = run_editorconfig_changes(editorconfig_config, abspath)
+def generate_changes(editorconfig: dict, abspath: str, relpath: str):
+    old_contents, new_contents = run_changes(editorconfig, abspath)
     if new_contents == old_contents:
         # no changes:
         return
@@ -56,19 +52,20 @@ def generate_changes(editorconfig_config, abspath, relpath):
     store_changes(abspath)
 
 
-def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={}):
-    end_of_line = editorconfig_config['end_of_line']
-    trim_trailing_whitespace = editorconfig_config['trim_trailing_whitespace']
-    insert_final_newline = editorconfig_config['insert_final_newline']
+def run_changes(editorconfig: dict, file_path: str,
+                lines_to_change: Dict[int, bool] = {}):
+    end_of_line = editorconfig['end_of_line']
+    trim_trailing_whitespace = editorconfig['trim_trailing_whitespace']
+    insert_final_newline = editorconfig['insert_final_newline']
     if end_of_line == "lf":
         eol = '\n'
     elif end_of_line == "crlf":
         eol = '\r\n'
     else:
-        raise RuntimeException("Unhandled line ending")
+        raise RuntimeError("Unhandled line ending")
     old_contents = get_contents(file_path)
     lines = get_lines(file_path)
-    with tempfile.TemporaryFile() as tmp:
+    with tempfile.TemporaryFile(mode='w+t') as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
             modified_line = orig_line
@@ -76,7 +73,8 @@ def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={})
             if trim_trailing_whitespace:
                 modified_line = re.sub(r'\s*\n', '\n', modified_line)
             modified_line = re.sub(r'\r?\n', eol, modified_line)
-            if line_number == last_line and insert_final_newline and '\n' not in modified_line:
+            if line_number == last_line and \
+                    insert_final_newline and '\n' not in modified_line:
                 modified_line += eol
             if not lines_to_change or line_number in lines_to_change:
                 tmp.write(modified_line)
@@ -90,7 +88,8 @@ def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={})
 def find_and_write_commits():
     modified_files = run(['git', 'ls-files', '-m'])
     if modified_files[0] != '' or len(modified_files) > 1:
-        print("You have modified files!\n\nOnly run this script on a pristine tree.")
+        print("You have modified files!\n\n")
+        print("Only run this script on a pristine tree.")
         print(modified_files)
         sys.exit(1)
     files = run(['git', 'ls-files'])
@@ -99,8 +98,8 @@ def find_and_write_commits():
             continue
         try:
             abspath = os.path.abspath(change_file)
-            editorconfig_options = get_properties(abspath)
-            generate_changes(editorconfig_options, abspath, change_file)
+            editorconfig = get_properties(abspath)
+            generate_changes(editorconfig, abspath, change_file)
         except EditorConfigError:
             print("Error occurred while getting EditorConfig properties")
     # Generate the commits:
@@ -109,8 +108,10 @@ def find_and_write_commits():
         gitinfo = GitCommitInfo.from_commit(commit)
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
-            editorconfig_options = get_properties(change_file)
-            old_contents, new_contents = run_editorconfig_changes(editorconfig_options, change_file, line_numbers)
+            editorconfig = get_properties(change_file)
+            old_contents, new_contents = run_changes(editorconfig,
+                                                     change_file,
+                                                     line_numbers)
             with open(change_file, 'w') as f:
                 f.write(new_contents)
         gitinfo.impersonate_and_write_commit(change.files())

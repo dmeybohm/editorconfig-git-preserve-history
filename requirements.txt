@@ -1,1 +1,1 @@
--e git://github.com/editorconfig/editorconfig-core-py.git@9a3c7b30511e06a011653cd34f69bdefcf0380db#egg=editorconfig
+EditorConfig==0.12.1

@@ -1,3 +1,6 @@
 #!/bin/sh
-python test_gitcommit.py
+for i in test_*.py
+do
+    python "$i"
+done
 

@@ -1,20 +1,21 @@
 import subprocess
+import locale
+from typing import List
 
 
-def run(cmd):
+def run(cmd: List[str], encoding: str = None) -> List[str]:
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     output = proc.communicate()[0]
-    return output.split("\n")
+    if encoding is None:
+        encoding = locale.getpreferredencoding()
+    return output.decode(encoding).split("\n")
 
 
-def get_contents(file_path):
-    with open(file_path, "r") as f:
+def get_contents(file_path: str) -> str:
+    with open(file_path, "rt") as f:
         return f.read()
 
 
-def get_lines(file_path):
-    with open(file_path, "r") as f:
+def get_lines(file_path: str) -> List[str]:
+    with open(file_path, "rt") as f:
         return f.readlines()
-
-
-
