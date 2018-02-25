@@ -1,31 +1,32 @@
 #!/usr/bin/env python
-
+import locale
 import os
 import re
 import sys
 import tempfile
+from typing import Dict, List
 
 from editorconfig import get_properties, EditorConfigError
 
 from util import run, get_contents, get_lines
 from gitcommit import GitCommitInfo
 
-changes_by_commit = {}
+changes_by_commit = {}  # type: Dict[str, 'Change']
 
 
 class Change:
     def __init__(self):
-        self.changes = {}
+        self.changes = {}  # type: Dict[str, List[int]]
 
     def add_change(self, file_path: str, line_number: int):
         if file_path not in self.changes:
             self.changes[file_path] = []
         self.changes[file_path].append(line_number)
 
-    def files(self) -> list:
+    def files(self) -> List[str]:
         return list(self.changes.keys())
 
-    def line_numbers_for_file(self, file_path: str) -> dict:
+    def line_numbers_for_file(self, file_path: str) -> Dict[int, bool]:
         return {line_number: True for line_number in self.changes[file_path]}
 
 
@@ -44,8 +45,8 @@ def store_changes(change_file: str):
         changes_by_commit[commit].add_change(change_file, line_number)
 
 
-def generate_changes(editorconfig_config: dict, abspath: str, relpath: str):
-    old_contents, new_contents = run_editorconfig_changes(editorconfig_config, abspath)
+def generate_changes(editorconfig: dict, abspath: str, relpath: str):
+    old_contents, new_contents = run_editorconfig_changes(editorconfig, abspath)
     if new_contents == old_contents:
         # no changes:
         return
@@ -53,10 +54,10 @@ def generate_changes(editorconfig_config: dict, abspath: str, relpath: str):
     store_changes(abspath)
 
 
-def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={}):
-    end_of_line = editorconfig_config['end_of_line']
-    trim_trailing_whitespace = editorconfig_config['trim_trailing_whitespace']
-    insert_final_newline = editorconfig_config['insert_final_newline']
+def run_editorconfig_changes(editorconfig: dict, file_path: str, lines_to_change: Dict[int, bool] = {}):
+    end_of_line = editorconfig['end_of_line']
+    trim_trailing_whitespace = editorconfig['trim_trailing_whitespace']
+    insert_final_newline = editorconfig['insert_final_newline']
     if end_of_line == "lf":
         eol = '\n'
     elif end_of_line == "crlf":
@@ -65,7 +66,8 @@ def run_editorconfig_changes(editorconfig_config, file_path, lines_to_change={})
         raise RuntimeError("Unhandled line ending")
     old_contents = get_contents(file_path)
     lines = get_lines(file_path)
-    with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as tmp:
+    encoding = locale.getpreferredencoding()
+    with tempfile.TemporaryFile(mode='w+t', encoding=encoding) as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
             modified_line = orig_line
@@ -96,8 +98,8 @@ def find_and_write_commits():
             continue
         try:
             abspath = os.path.abspath(change_file)
-            editorconfig_options = get_properties(abspath)
-            generate_changes(editorconfig_options, abspath, change_file)
+            editorconfig = get_properties(abspath)
+            generate_changes(editorconfig, abspath, change_file)
         except EditorConfigError:
             print("Error occurred while getting EditorConfig properties")
     # Generate the commits:
@@ -106,8 +108,8 @@ def find_and_write_commits():
         gitinfo = GitCommitInfo.from_commit(commit)
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
-            editorconfig_options = get_properties(change_file)
-            old_contents, new_contents = run_editorconfig_changes(editorconfig_options, change_file, line_numbers)
+            editorconfig = get_properties(change_file)
+            old_contents, new_contents = run_editorconfig_changes(editorconfig, change_file, line_numbers)
             with open(change_file, 'w') as f:
                 f.write(new_contents)
         gitinfo.impersonate_and_write_commit(change.files())

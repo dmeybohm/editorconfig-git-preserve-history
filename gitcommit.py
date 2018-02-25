@@ -3,14 +3,14 @@ from util import run
 
 
 class GitCommitInfo:
-    def __init__(self, commit, author, date, message):
+    def __init__(self, commit: str, author: str, date: str, message: str):
         self.commit = commit
         self.author = author
         self.date = date
         self.message = message
 
     @classmethod
-    def from_commit(cls, commit: str):
+    def from_commit(cls, commit: str) -> 'GitCommitInfo':
         lines = run(['git', 'log', '-1', commit])
         commit_log = "\n".join(lines)
         commit = match_commit(commit_log)
