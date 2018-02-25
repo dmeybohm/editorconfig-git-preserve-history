@@ -1,12 +1,9 @@
 #!/bin/sh
 
+# Hidden in a .travis dir to avoid running it outside travis
+
 # Test installing the package with pip-install and then
 # running it on a previous version of its own repository
-python -m venv venv-clonetest
-. venv-clonetest/bin/activate
-echo `which pip`
-echo `pwd`
-pip install -r dev-requirements.txt
 pip install -e .
 git clone . clonetest 
 cd clonetest 
