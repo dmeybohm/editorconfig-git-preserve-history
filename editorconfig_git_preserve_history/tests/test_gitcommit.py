@@ -1,5 +1,5 @@
 import unittest
-import gitcommit
+import editorconfig_git_preserve_history.gitcommit as gitcommit
 
 test_commit = """commit 9471e20cebc84f5931c77eb2bf6c8eb004ed2305
 Author: A User <user@example.org>

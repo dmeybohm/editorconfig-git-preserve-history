@@ -10,4 +10,6 @@ setup(name='editorconfig_git_preserve_history',
       packages=['editorconfig_git_preserve_history'],
       install_requires=[
           'EditorConfig>=0.12.1',
-      ])
+      ],
+      test_suite = 'nose.collector',
+      tests_require = ['nose'])

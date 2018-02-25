@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from util import run
+from .util import run
 
 
 class GitCommitInfo:
