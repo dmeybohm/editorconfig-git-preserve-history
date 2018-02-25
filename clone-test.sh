@@ -4,6 +4,8 @@
 # running it on a previous version of its own repository
 python -m venv venv-clonetest
 . venv-clonetest/bin/activate
+echo `which pip`
+echo `pwd`
 pip install -r dev-requirements.txt
 pip install -e .
 git clone . clonetest 
