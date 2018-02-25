@@ -1,6 +1,18 @@
 #!/bin/sh
 
 # Hidden in a .travis dir to avoid running it outside travis
+cat > .editorconfig << EOF
+# editorconfig.org
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+EOF
 
 # Test installing the package with pip-install and then
 # running it on a previous version of its own repository
