@@ -15,3 +15,4 @@ class Change:
 
     def line_numbers_for_file(self, file_path: str) -> Dict[int, bool]:
         return {line_number: True for line_number in self.changes[file_path]}
+
