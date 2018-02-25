@@ -12,5 +12,5 @@ setup(name='editorconfig_git_preserve_history',
           'EditorConfig>=0.12.1',
       ],
       scripts=['bin/editorconfig-git-preserve-history'],
-      test_suite = 'nose.collector',
-      tests_require = ['nose'])
+      test_suite='nose.collector',
+      tests_require=['nose'])
