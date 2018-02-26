@@ -46,7 +46,7 @@ Then activate the environment and install the requirements from the `dev-require
 .. code:: sh
 
     . venv/bin/activate
-    pip install -r dev-requirements.txt
+    pip install -r requirements.txt
 
 Be sure to run the tests with nosetests before issuing a PR:
 
@@ -54,3 +54,10 @@ Be sure to run the tests with nosetests before issuing a PR:
 
     nosetests
 
+You can also run `mypy`, the Python static analyzer, to check for typing errors:
+
+.. code:: sh
+
+    mypy --ignore-missing-imports -p editorconfig_git_preserve_history
+
+Also make sure to run mypy, the static analyzer, to 
