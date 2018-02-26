@@ -17,6 +17,8 @@ changes_by_commit = {}  # type: Dict[str, 'Change']
 def store_changes(change_file: str):
     blame = run(['git', 'blame', change_file])
     for line_number, line in enumerate(blame):
+        if len(line) == 0:
+            continue
         match = re.match(r'^(\S+)', line)
         if not match:
             print("Bad match:" + str(len(line)))
@@ -76,6 +78,8 @@ def find_and_write_commits():
         sys.exit(1)
     files = run(['git', 'ls-files'])
     for change_file in files:
+        if len(change_file) == 0:
+            continue
         try:
             abspath = os.path.abspath(change_file)
             editorconfig = get_properties(abspath)
