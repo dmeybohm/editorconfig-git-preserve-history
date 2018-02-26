@@ -9,14 +9,14 @@ Installation
 
 Python 3.5 or later is required. On macOS, you can install `homebrew` first and then:
 
-.. code-block:: shell
+.. code:: sh
     brew install python3
 
 With pip
 --------
 
 After installing Python 3
-.. code-block:: shell
+.. code:: sh
     pip install EditorConfigGitPreserveHistory
 
 
@@ -24,7 +24,7 @@ After installing Python 3
 Running
 -------
 
-.. code-block:: shell
+.. code:: sh
     editorconfig-git-preserve-history
 
 
@@ -33,17 +33,17 @@ Developing
 
 Create a virtual environment with the venv module:
 
-.. code-block:: shell
+.. code:: sh
     python3 -m venv venv
 
  Then activate the environment and install the requirements from the `dev-requirements.txt` file:
 
-.. code-block:: shell
+.. code:: sh
     . venv/bin/activate
     pip install -r dev-requirements.txt
 
 Be sure to run the tests with nosetests before issuing a PR:
 
-.. code-block:: shell
+.. code:: sh
     nosetests
 
