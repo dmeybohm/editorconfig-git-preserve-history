@@ -17,6 +17,10 @@ class GitCommitInfo:
             commit = commit[1:]
         lines = run(['git', 'log', '-1', commit])
         commit_log = "\n".join(lines)
+        return cls.from_commit_log(commit, commit_log)
+
+    @classmethod
+    def from_commit_log(cls, commit, commit_log):
         try:
             commit = match_commit(commit_log)
             author = match_author(commit_log)

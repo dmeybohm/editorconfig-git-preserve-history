@@ -44,10 +44,6 @@ class GitCommitTest(unittest.TestCase):
         message = gitcommit.match_message(test_commit)
         self.assertEqual(commit_message, message)
 
-    def test_git_commit_info_from_base_commit(self):
-        commit = GitCommitInfo.from_commit("^9725481")
-        self.assertTrue(commit.commit.startswith('9725481'))
-
 
 if __name__ == "__main__":
     unittest.main()
