@@ -59,5 +59,3 @@ You can also run `mypy`, the Python static analyzer, to check for typing errors:
 .. code:: sh
 
     mypy --ignore-missing-imports -p editorconfig_git_preserve_history
-
-Also make sure to run mypy, the static analyzer, to 
