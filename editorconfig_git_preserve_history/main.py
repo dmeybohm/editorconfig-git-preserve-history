@@ -6,6 +6,7 @@ import tempfile
 from typing import Dict, List
 from editorconfig import get_properties, EditorConfigError
 
+from . import gitstatus
 from .change import Change
 from .util import run, get_contents, get_lines
 from .gitcommit import GitCommitInfo
@@ -71,11 +72,9 @@ def run_changes(editorconfig: dict, file_path: str,
 
 
 def find_and_write_commits():
-    modified_files = run(['git', 'ls-files', '-m'])
-    if modified_files[0] != '' or len(modified_files) > 1:
+    if gitstatus.haschanges():
         print("You have modified files!\n\n")
         print("Only run this script on a pristine tree.")
-        print(modified_files)
         sys.exit(1)
     files = run(['git', 'ls-files'])
     for change_file in files:
