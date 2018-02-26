@@ -1,7 +1,6 @@
 import re
 from typing import List
-
-from util import run
+from .util import run
 
 
 class GitCommitInfo:
@@ -14,12 +13,22 @@ class GitCommitInfo:
 
     @classmethod
     def from_commit(cls, commit: str) -> 'GitCommitInfo':
+        if commit.startswith('^'):
+            commit = commit[1:]
         lines = run(['git', 'log', '-1', commit])
         commit_log = "\n".join(lines)
-        commit = match_commit(commit_log)
-        author = match_author(commit_log)
-        date = match_date(commit_log)
-        message = match_message(commit_log)
+        return cls.from_commit_log(commit, commit_log)
+
+    @classmethod
+    def from_commit_log(cls, commit, commit_log):
+        try:
+            commit = match_commit(commit_log)
+            author = match_author(commit_log)
+            date = match_date(commit_log)
+            message = match_message(commit_log)
+        except AttributeError:
+            print("Failed to parse commit {} for commit log: {}".format(commit, commit_log))
+            raise
         return GitCommitInfo(commit, author, date, message)
 
     def impersonate_and_write_commit(self, files: List[str]) -> None:

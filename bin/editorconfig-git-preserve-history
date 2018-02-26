@@ -1,0 +1,3 @@
+#!/usr/bin/env python3
+import editorconfig_git_preserve_history
+editorconfig_git_preserve_history.find_and_write_commits()

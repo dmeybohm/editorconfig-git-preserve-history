@@ -6,26 +6,11 @@ import tempfile
 from typing import Dict, List
 from editorconfig import get_properties, EditorConfigError
 
-from util import run, get_contents, get_lines
-from gitcommit import GitCommitInfo
+from .change import Change
+from .util import run, get_contents, get_lines
+from .gitcommit import GitCommitInfo
 
 changes_by_commit = {}  # type: Dict[str, 'Change']
-
-
-class Change:
-    def __init__(self):
-        self.changes = {}  # type: Dict[str, List[int]]
-
-    def add_change(self, file_path: str, line_number: int):
-        if file_path not in self.changes:
-            self.changes[file_path] = []
-        self.changes[file_path].append(line_number)
-
-    def files(self) -> List[str]:
-        return list(self.changes.keys())
-
-    def line_numbers_for_file(self, file_path: str) -> Dict[int, bool]:
-        return {line_number: True for line_number in self.changes[file_path]}
 
 
 def store_changes(change_file: str):
