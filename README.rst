@@ -41,12 +41,12 @@ Create a virtual environment with the venv module:
 
     python3 -m venv venv
 
-Then activate the environment and install the requirements from the `dev-requirements.txt` file:
+Then activate the environment and install the requirements from the `requirements.txt` file:
 
 .. code:: sh
 
     . venv/bin/activate
-    pip install -r dev-requirements.txt
+    pip install -r requirements.txt
 
 Be sure to run the tests with nosetests before issuing a PR:
 
@@ -54,3 +54,8 @@ Be sure to run the tests with nosetests before issuing a PR:
 
     nosetests
 
+You can also run `mypy`, the Python static analyzer, to check for typing errors:
+
+.. code:: sh
+
+    mypy --ignore-missing-imports -p editorconfig_git_preserve_history
