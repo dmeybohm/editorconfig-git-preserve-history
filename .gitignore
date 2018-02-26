@@ -1,6 +1,9 @@
+.idea/
 *.pyc
 dist/
 /__pycache__/
 /*.egg-info
 /*.egg
 venv/
+.mypy_cache/
+.pytest_cache/
