@@ -41,7 +41,7 @@ Create a virtual environment with the venv module:
 
     python3 -m venv venv
 
- Then activate the environment and install the requirements from the `dev-requirements.txt` file:
+Then activate the environment and install the requirements from the `dev-requirements.txt` file:
 
 .. code:: sh
 
