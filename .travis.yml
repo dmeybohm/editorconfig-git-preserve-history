@@ -8,4 +8,5 @@ install:
 
 script:
   - nosetests
+  - mypy -p editorconfig_git_preserve_history
   - sh .travis-scripts/clone-test.sh
