@@ -6,7 +6,7 @@ from .util import get_contents, get_lines
 
 
 def replace_editorconfig(editorconfig: dict, file_path: str,
-                         lines_to_change: Dict[int, bool] = {}):
+                         lines_to_change: Dict[int, bool] = {}) -> Tuple[str, str]:
     end_of_line = editorconfig['end_of_line']
     trim_trailing_whitespace = editorconfig['trim_trailing_whitespace']
     insert_final_newline = editorconfig['insert_final_newline']
