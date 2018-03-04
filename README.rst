@@ -20,7 +20,7 @@ After installing Python 3
 
 .. code:: sh
 
-    pip install EditorConfigGitPreserveHistory
+    pip3 install EditorConfigGitPreserveHistory
 
 
 
