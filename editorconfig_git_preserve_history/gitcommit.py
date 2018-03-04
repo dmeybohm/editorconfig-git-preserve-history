@@ -20,7 +20,7 @@ class GitCommitInfo:
         return cls.from_commit_log(commit, commit_log)
 
     @classmethod
-    def from_commit_log(cls, commit, commit_log):
+    def from_commit_log(cls, commit: str, commit_log: str):
         try:
             commit = match_commit(commit_log)
             author = match_author(commit_log)
@@ -34,10 +34,13 @@ class GitCommitInfo:
     def impersonate_and_write_commit(self, files: List[str]) -> None:
         print("Overwriting " + self.commit + " (Impersonating " +
               self.author + ")")
-        message = self.message + "\n\nFrom-Commit: " + self.commit
+        impersonator_email = run(['git', 'config', 'user.email'])[0]
+        impersonator_name = run(['git', 'config', 'user.name'])[0]
+        message = self.message + "\n\nFrom-Commit: " + self.commit + "\n" + \
+            "Impersonator: {} <{}>".format(impersonator_name, impersonator_email)
         args = ['git', 'commit', '--date', self.date, '--author', self.author,
                 '--message', message]
-        output = run(args + files)
+        run(args + files)
 
 
 def match_commit(commit_log: str) -> str:
