@@ -15,15 +15,15 @@ class UtilTest(unittest.TestCase):
         result = replace_leading_spaces_with_tabs('    if test:', 2, 4)
         self.assertEqual('\t\tif test:', result)
 
-    def test_replace_leading_tabs_with_tab_in_middle(self):
+    def test_replace_leading_spaces_with_tab_in_middle(self):
         result = replace_leading_spaces_with_tabs('  \t  if test:', 4, 4)
         self.assertEqual('\t\tif test:', result)
 
-    def test_replace_leading_tabs_with_tab_at_end(self):
+    def test_replace_leading_spaces_with_tab_at_end(self):
         result = replace_leading_spaces_with_tabs('  \tif test:', 4, 4)
         self.assertEqual('\t  if test:', result)
 
-    def test_replace_leading_spaces_with_tabs(self):
+    def test_replace_leading_tabs_with_spaces(self):
         result = replace_leading_tabs_with_spaces('\t  \tif test:', 4)
         self.assertEquals((' ' * 8) + '  if test:', result)
 

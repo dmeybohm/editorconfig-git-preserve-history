@@ -54,18 +54,31 @@ def expand_to_tabs(editorconfig: dict, modified_line: str) -> str:
 
 
 def get_indent_sizes(editorconfig: dict) -> Tuple[int, int]:
-    indent_size = 4
+    indent_size = get_indent_size(editorconfig)
+    tab_size = get_tab_size(editorconfig)
+    return indent_size, tab_size
+
+
+def get_tab_size(editorconfig: dict, no_recurse: bool = False) -> int:
     if 'tab_width' in editorconfig:
         tab_size = int(editorconfig['tab_width'])
     else:
-        tab_size = 8
+        if no_recurse:
+            tab_size = 4
+        else:
+            tab_size = get_indent_size(editorconfig)
+    return tab_size
+
+
+def get_indent_size(editorconfig: dict) -> int:
+    indent_size = 4
     if 'indent_size' in editorconfig:
         indent_size = editorconfig['indent_size']
         if indent_size == 'tab':
-            indent_size = tab_size
+            indent_size = get_tab_size(editorconfig, True)
         else:
             indent_size = int(indent_size)
-    return indent_size, tab_size
+    return indent_size
 
 
 def replace_leading_tabs_with_spaces(line: str, indent_size: int) -> str:
