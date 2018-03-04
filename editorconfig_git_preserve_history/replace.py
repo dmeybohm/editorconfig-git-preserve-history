@@ -27,10 +27,10 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
                 modified_line = re.sub(r'\s*\n', '\n', modified_line)
             modified_line = re.sub(r'\r?\n', eol, modified_line)
             # Handle spaces vs tabs:
-            if editorconfig['indent_style'] == 'space':
-                modified_line = expand_to_spaces(editorconfig, modified_line)
-            else:
+            if editorconfig['indent_style'] == 'tab':
                 modified_line = expand_to_tabs(editorconfig, modified_line)
+            else:
+                modified_line = expand_to_spaces(editorconfig, modified_line)
             if line_number == last_line and \
                     insert_final_newline and '\n' not in modified_line:
                 modified_line += eol
