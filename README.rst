@@ -31,9 +31,11 @@ Running
 
     editorconfig-git-preserve-history
 
-The script will write commits into your current branch that reformat according to the `.editorconfig`
-that applies to each file in your repository. It will also add "Impersonator:" and "From-Commit:" lines
-to the commit message of each commit to reference back to the previous commit. It looks like this:
+The script will write commits into your current branch that reformat according
+to the `.editorconfig` that applies to each file in your repository. It will
+also add "Impersonator:" and "From-Commit:" lines to the commit message of each
+commit to reference back to the previous commit and inform whoever looks at the
+log who created this whitespace commit. It looks like this:
 
 .. code::
 
