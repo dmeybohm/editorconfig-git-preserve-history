@@ -60,7 +60,7 @@ def find_and_write_commits():
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
             editorconfig = get_properties(change_file)
-            old_contents, new_contents = run_changes(editorconfig,
+            old_contents, new_contents = replace_editorconfig(editorconfig,
                                                      change_file,
                                                      line_numbers)
             with open(change_file, 'w') as f:
