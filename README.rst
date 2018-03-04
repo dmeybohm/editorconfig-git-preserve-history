@@ -31,6 +31,21 @@ Running
 
     editorconfig-git-preserve-history
 
+The script will write commits into your current branch that reformat according to the `.editorconfig`
+that applies to each file in your repository. It will also add "Impersonator:" and "From-Commit:" lines
+to the commit message of each commit to reference back to the previous commit. It looks like this:
+
+.. code::
+
+    commit 0e5f0feb7f9453b2fc8595f3db7835dbfe57db0e
+    Author: Original Author <originalauthor@example.com>
+    Date:   Mon Feb 19 20:33:06 2018 -0500
+
+    Add editorconfig module to requirements.txt
+    
+    From-Commit: 0e9d1d4bd3fe4cb278ed785bdb229e519eccc857
+    Impersonator: New Authro <newauthor@example.com>
+
 
 Developing
 ----------
