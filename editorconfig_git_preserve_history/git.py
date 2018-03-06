@@ -59,3 +59,19 @@ def match_message(commit_log: str) -> str:
     commit_log = re.sub(r"^(.*)\n\n", '', commit_log, 0, re.M | re.S)
     commit_log = re.sub(r"^\s{4}", '', commit_log, 0, re.M)
     return commit_log
+
+
+def has_changes() -> bool:
+    lines = run(['git', 'status', '--porcelain'])
+    for line in lines:
+        if len(line) == 0:
+            continue
+        if line.startswith(' '):
+            line = line[1:]
+        if line[0] == 'M' or line[0] == 'A' or line[0] == 'D':
+            return True
+    return False
+
+
+def list_text_files() -> List[str]:
+    return run(['git', 'grep', '-I', '-l', '.'])
