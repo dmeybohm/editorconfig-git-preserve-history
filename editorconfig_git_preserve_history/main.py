@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+
 from typing import Dict
 from editorconfig import get_properties, EditorConfigError
 
@@ -10,6 +11,7 @@ from .change import Change
 from .util import run
 from .gitcommit import GitCommitInfo
 from .replace import replace_editorconfig
+from .gitfiles import list_git_files
 
 changes_by_commit = {}  # type: Dict[str, 'Change']
 
@@ -43,8 +45,7 @@ def find_and_write_commits():
         print("You have modified files!\n\n")
         print("Only run this script on a pristine tree.")
         sys.exit(1)
-    files = run(['git', 'ls-files'])
-    for change_file in files:
+    for change_file in list_git_files():
         if len(change_file) == 0:
             continue
         try:
