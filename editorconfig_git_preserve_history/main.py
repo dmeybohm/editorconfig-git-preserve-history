@@ -6,12 +6,11 @@ import sys
 from typing import Dict
 from editorconfig import get_properties, EditorConfigError
 
-from . import gitstatus
+from . import git
 from .change import Change
 from .util import run
-from .gitcommit import GitCommitInfo
+from .git import GitCommitInfo
 from .replace import replace_editorconfig
-from .gitfiles import list_git_files
 
 changes_by_commit = {}  # type: Dict[str, 'Change']
 
@@ -41,11 +40,11 @@ def generate_changes(editorconfig: dict, abspath: str, relpath: str):
 
 
 def find_and_write_commits():
-    if gitstatus.haschanges():
+    if git.has_changes():
         print("You have modified files!\n\n")
         print("Only run this script on a pristine tree.")
         sys.exit(1)
-    for change_file in list_git_files():
+    for change_file in git.list_text_files():
         if len(change_file) == 0:
             continue
         try:
