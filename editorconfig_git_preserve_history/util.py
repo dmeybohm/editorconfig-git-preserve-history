@@ -2,6 +2,9 @@ import subprocess
 import locale
 from typing import List
 
+UNICODE_ESCAPING = "surrogateescape"
+ASCII_ENCODING = "ascii"
+
 
 def run(cmd: List[str], encoding: str = None) -> List[str]:
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -14,11 +17,20 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
     return output_str.split("\n")
 
 
-def get_contents(file_path: str) -> str:
-    with open(file_path, "rt") as f:
-        return f.read()
+def get_contents(file_path: str, use_ascii: bool = False) -> str:
+    if use_ascii:
+        with open(file_path, "rb") as f:
+            return f.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
+    else:
+        with open(file_path, "rt") as f:
+            return f.read()
 
 
-def get_lines(file_path: str) -> List[str]:
-    with open(file_path, "rt") as f:
-        return f.readlines()
+def get_lines(file_path: str, use_ascii: bool = False) -> List[str]:
+    if use_ascii:
+        with open(file_path, "rt", encoding=ASCII_ENCODING,
+                  errors=UNICODE_ESCAPING) as f:
+            return f.readlines()
+    else:
+        with open(file_path, "rt") as f:
+            return f.readlines()

@@ -3,6 +3,7 @@ import tempfile
 from typing import Dict, Tuple
 
 from .util import get_contents, get_lines
+from .util import UNICODE_ESCAPING, ASCII_ENCODING
 
 
 def replace_editorconfig(editorconfig: dict, file_path: str,
@@ -27,9 +28,9 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
     elif end_of_line == "cr":
         raise RuntimeError("Unhandled line ending")
 
-    old_contents = get_contents(file_path)
-    lines = get_lines(file_path)
-    with tempfile.TemporaryFile(mode='w+t') as tmp:
+    old_contents = get_contents(file_path, use_ascii=True)
+    lines = get_lines(file_path, use_ascii=True)
+    with tempfile.TemporaryFile(mode='w+b') as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
             modified_line = orig_line
@@ -53,12 +54,12 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
 
             # Write either the modified line or the original line:
             if not lines_to_change or line_number in lines_to_change:
-                tmp.write(modified_line)
+                tmp.write(modified_line.encode(ASCII_ENCODING, errors=UNICODE_ESCAPING))
             else:
                 tmp.write(orig_line)
 
         tmp.seek(0, 0)
-        new_contents = tmp.read()
+        new_contents = tmp.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
         return old_contents, new_contents
 
 
@@ -94,7 +95,7 @@ def get_indent_size(editorconfig: dict) -> int:
     if 'indent_size' in editorconfig:
         indent_size = editorconfig['indent_size']
         if indent_size == 'tab':
-            indent_size = get_tab_size(editorconfig, True)
+            indent_size = get_tab_size(editorconfig, no_recurse=True)
         else:
             indent_size = int(indent_size)
     return indent_size
