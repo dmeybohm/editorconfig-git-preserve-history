@@ -1,11 +1,13 @@
 editorconfig-git-preserve-history
 =================================
 
-This will read `editorconfig`_ files and preserve history by writing new commits
-with the original authorship and date but with thewhitespace updated.
+This tool is a script that runs on a git repository that contains`editorconfig`_ files.
+This rewrites all the text files in the repository to update the whitespace in accordance with
+the editorconfig, but preserves history by writing new commits with the original authorship and
+commit date.
 
-The purpose of this is twofold: to maintain the original authorship of changes due only
-to editorconfig, thus making the original authorship information more accessible even
+The purpose of this is twofold: to maintain the original authorship of changes (as reported
+by git blame) due only to editorconfig, thus making the original authorship information more accessible even
 when using editorconfig, and also to avoid the hassle of having to handle large
 numbers of changes due to files that are drastically different from what's
 configured in an .editorconfig.
