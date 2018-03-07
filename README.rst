@@ -1,7 +1,7 @@
 editorconfig-git-preserve-history
 =================================
 
-This tool is a script that runs on a git repository that contains`editorconfig`_ files.
+This tool is a script that runs on a git repository that contains `editorconfig`_ files.
 This rewrites all the text files in the repository to update the whitespace in accordance with
 the editorconfig, but preserves history by writing new commits with the original authorship and
 commit date.
