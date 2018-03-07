@@ -13,8 +13,10 @@ numbers of changes due to files that are drastically different from what's
 configured in an .editorconfig.
 
 By rewriting all the whitespace at once with this tool, you can keep your
-editorconfig plugin in your editor enabled, and avoid unnecessary whitespace changes
-in other, more important code changes.
+editorconfig plugin in your editor enabled, avoid unnecessary whitespace changes
+in other, more important code changes, and at the same time preserve the usefulness
+of git blame on files that have drastically different whitespace from your editorconfig
+files.
 
 Installation
 ------------
