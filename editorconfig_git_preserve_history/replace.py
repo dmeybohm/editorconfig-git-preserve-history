@@ -7,37 +7,56 @@ from .util import get_contents, get_lines
 
 def replace_editorconfig(editorconfig: dict, file_path: str,
                          lines_to_change: Dict[int, bool] = {}) -> Tuple[str, str]:
-    end_of_line = editorconfig['end_of_line']
-    trim_trailing_whitespace = editorconfig['trim_trailing_whitespace']
-    insert_final_newline = editorconfig['insert_final_newline']
+    end_of_line = None
+    if 'end_of_line' in editorconfig:
+        end_of_line = editorconfig['end_of_line']
+    trim_trailing_whitespace = False
+    if 'trim_trailing_whitespace' in editorconfig:
+        trim_trailing_whitespace = editorconfig['trim_trailing_whitespace']
+    insert_final_newline = False
+    if 'insert_final_newline' in editorconfig:
+        insert_final_newline = editorconfig['insert_final_newline']
+
+    indent_style = None
+    if 'indent_style' in editorconfig:
+        indent_style = editorconfig['indent_style']
     if end_of_line == "lf":
         eol = '\n'
     elif end_of_line == "crlf":
         eol = '\r\n'
-    else:
+    elif end_of_line == "cr":
         raise RuntimeError("Unhandled line ending")
+
     old_contents = get_contents(file_path)
     lines = get_lines(file_path)
     with tempfile.TemporaryFile(mode='w+t') as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
             modified_line = orig_line
+
             # Do whitespace first to not strip carriage returns:
             if trim_trailing_whitespace:
                 modified_line = re.sub(r'\s*\n', '\n', modified_line)
-            modified_line = re.sub(r'\r?\n', eol, modified_line)
+            if end_of_line is not None:
+                modified_line = re.sub(r'\r?\n', eol, modified_line)
+
             # Handle spaces vs tabs:
-            if editorconfig['indent_style'] == 'tab':
+            if indent_style == 'tab':
                 modified_line = expand_to_tabs(editorconfig, modified_line)
-            else:
+            elif indent_style == 'space':
                 modified_line = expand_to_spaces(editorconfig, modified_line)
+
+            # Insert final newline
             if line_number == last_line and \
                     insert_final_newline and '\n' not in modified_line:
                 modified_line += eol
+
+            # Write either the modified line or the original line:
             if not lines_to_change or line_number in lines_to_change:
                 tmp.write(modified_line)
             else:
                 tmp.write(orig_line)
+
         tmp.seek(0, 0)
         new_contents = tmp.read()
         return old_contents, new_contents
