@@ -14,7 +14,7 @@ configured in an .editorconfig.
 
 By rewriting all the whitespace at once with this tool, you can keep your
 editorconfig plugin in your editor enabled, and avoid unnecessary whitespace changes
-in other more important code changes.
+in other, more important code changes.
 
 Installation
 ------------
