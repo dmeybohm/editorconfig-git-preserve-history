@@ -54,7 +54,7 @@ your project, but preserve the original authorship.
 This way, if you do `git blame` you will still see the original author
 of each line, but the whitespace will also be updated. If you
 have enabled an editorconfig plugin in your editor, it will not have to
-rewrite the entire file and destroy the authorship information.
+rewrite the entire file make the authorship information harder to access.
 
 Developing
 ----------
