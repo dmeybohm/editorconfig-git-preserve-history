@@ -17,8 +17,8 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
     return output_str.split("\n")
 
 
-def get_contents(file_path: str, use_ascii: bool = False) -> str:
-    if use_ascii:
+def get_contents(file_path: str, no_unicode: bool = False) -> str:
+    if no_unicode:
         with open(file_path, "rb") as fb:
             return fb.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
     else:
@@ -26,8 +26,8 @@ def get_contents(file_path: str, use_ascii: bool = False) -> str:
             return ft.read()
 
 
-def get_lines(file_path: str, use_ascii: bool = False) -> List[str]:
-    if use_ascii:
+def get_lines(file_path: str, no_unicode: bool = False) -> List[str]:
+    if no_unicode:
         with open(file_path, "rt", encoding=ASCII_ENCODING,
                   errors=UNICODE_ESCAPING) as f:
             return f.readlines()

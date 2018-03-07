@@ -33,7 +33,7 @@ Running
 
 The script will write commits into your current branch that reformat according
 to the `.editorconfig` that applies to each file in your repository. It will
-also add "Impersonator:" and "From-Commit:" lines to the commit message of each
+also add "Impersonator:" and "Original-Commit:" lines to the commit message of each
 commit to reference back to the previous commit and inform whoever looks at the
 log who created this whitespace commit. It looks like this:
 
@@ -45,7 +45,7 @@ log who created this whitespace commit. It looks like this:
 
     Add editorconfig module to requirements.txt
     
-    From-Commit: 0e9d1d4bd3fe4cb278ed785bdb229e519eccc857
+    Original-Commit: 0e9d1d4bd3fe4cb278ed785bdb229e519eccc857
     Impersonator: New Author <newauthor@example.com>
 
 You can then put those commits up on github and issue a pull request to change all the whitespace in

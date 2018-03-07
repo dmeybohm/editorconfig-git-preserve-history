@@ -38,7 +38,7 @@ class UtilTest(unittest.TestCase):
             with self.subTest(datadir=top_dir):
                 editorconfig = json.loads(get_contents(top_dir + 'editorconfig.json'))
                 input = top_dir + 'input.txt'
-                expected = get_contents(top_dir + 'output.txt', use_ascii=True)
+                expected = get_contents(top_dir + 'output.txt', no_unicode=True)
                 old_contents, new_contents = replace_editorconfig(editorconfig, input)
                 self.assertEqual(expected, new_contents)
 

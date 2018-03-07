@@ -36,7 +36,7 @@ class GitCommitInfo:
               self.author + ")")
         impersonator_email = run(['git', 'config', 'user.email'])[0]
         impersonator_name = run(['git', 'config', 'user.name'])[0]
-        message = self.message + "\n\nFrom-Commit: " + self.commit + "\n" + \
+        message = self.message + "\n\nOriginal-Commit: " + self.commit + "\n" + \
             "Impersonator: {} <{}>".format(impersonator_name, impersonator_email)
         args = ['git', 'commit', '--date', self.date, '--author', self.author,
                 '--message', message]
