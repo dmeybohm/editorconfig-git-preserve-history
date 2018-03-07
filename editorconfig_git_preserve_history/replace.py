@@ -28,8 +28,8 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
     elif end_of_line == "cr":
         raise RuntimeError("Unhandled line ending")
 
-    old_contents = get_contents(file_path, use_ascii=True)
-    lines = get_lines(file_path, use_ascii=True)
+    old_contents = get_contents(file_path, no_unicode=True)
+    lines = get_lines(file_path, no_unicode=True)
     with tempfile.TemporaryFile(mode='w+b') as tmp:
         last_line = len(lines) - 1
         for line_number, orig_line in enumerate(lines):
