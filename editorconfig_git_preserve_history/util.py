@@ -19,11 +19,11 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
 
 def get_contents(file_path: str, use_ascii: bool = False) -> str:
     if use_ascii:
-        with open(file_path, "rb") as f:
-            return f.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
+        with open(file_path, "rb") as fb:
+            return fb.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
     else:
-        with open(file_path, "rt") as f:
-            return f.read()
+        with open(file_path, "rt") as ft:
+            return ft.read()
 
 
 def get_lines(file_path: str, use_ascii: bool = False) -> List[str]:

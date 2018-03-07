@@ -56,7 +56,7 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
             if not lines_to_change or line_number in lines_to_change:
                 tmp.write(modified_line.encode(ASCII_ENCODING, errors=UNICODE_ESCAPING))
             else:
-                tmp.write(orig_line)
+                tmp.write(orig_line.encode(ASCII_ENCODING, errors=UNICODE_ESCAPING))
 
         tmp.seek(0, 0)
         new_contents = tmp.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
