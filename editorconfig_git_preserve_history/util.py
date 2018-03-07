@@ -34,3 +34,11 @@ def get_lines(file_path: str, use_ascii: bool = False) -> List[str]:
     else:
         with open(file_path, "rt") as f:
             return f.readlines()
+
+
+def hide_unicode(s: str) -> bytes:
+    return s.encode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
+
+
+def unhide_unicode(b: bytes) -> str:
+    return b.decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)

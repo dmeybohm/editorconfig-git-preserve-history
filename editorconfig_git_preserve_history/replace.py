@@ -3,7 +3,7 @@ import tempfile
 from typing import Dict, Tuple
 
 from .util import get_contents, get_lines
-from .util import UNICODE_ESCAPING, ASCII_ENCODING
+from .util import hide_unicode, unhide_unicode
 
 
 def replace_editorconfig(editorconfig: dict, file_path: str,
@@ -54,12 +54,12 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
 
             # Write either the modified line or the original line:
             if not lines_to_change or line_number in lines_to_change:
-                tmp.write(modified_line.encode(ASCII_ENCODING, errors=UNICODE_ESCAPING))
+                tmp.write(hide_unicode(modified_line))
             else:
-                tmp.write(orig_line.encode(ASCII_ENCODING, errors=UNICODE_ESCAPING))
+                tmp.write(hide_unicode(orig_line))
 
         tmp.seek(0, 0)
-        new_contents = tmp.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
+        new_contents = unhide_unicode(tmp.read())
         return old_contents, new_contents
 
 
