@@ -1,8 +1,18 @@
 editorconfig-git-preserve-history
 =================================
 
-This will read `editorconfig` files and preserve history by writing new commits with the original authorship and date but with the 
-whitespace updated.
+This will read `editorconfig`_ files and preserve history by writing new commits
+with the original authorship and date but with thewhitespace updated.
+
+The purpose of this is twofold: to maintain the original authorship of changes due only
+to editorconfig, thus making the original authorship information more accessible even
+when using editorconfig, and also to avoid the hassle of having to handle large
+numbers of changes due to files that are drastically different from what's
+configured in an .editorconfig.
+
+By rewriting all the whitespace at once with this tool, you can keep your
+editorconfig plugin in your editor enabled, and avoid unnecessary whitespace changes
+in other more important code changes.
 
 Installation
 ------------
@@ -52,9 +62,7 @@ You can then put those commits up on github and issue a pull request to change a
 your project, but preserve the original authorship.
 
 This way, if you do `git blame` you will still see the original author
-of each line, but the whitespace will also be updated. If you
-have enabled an editorconfig plugin in your editor, it will not have to
-rewrite the entire file make the authorship information harder to access.
+of each line, but the whitespace will also be updated.
 
 Developing
 ----------
@@ -83,3 +91,5 @@ You can also run `mypy`, the Python static analyzer, to check for typing errors:
 .. code:: sh
 
     mypy --ignore-missing-imports -p editorconfig_git_preserve_history
+
+.. _editorconfig: http://editorconfig.org
