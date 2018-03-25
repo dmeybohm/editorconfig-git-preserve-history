@@ -5,7 +5,8 @@ from editorconfig_git_preserve_history.util import get_contents
 from editorconfig_git_preserve_history.replace import (
     replace_editorconfig,
     replace_leading_spaces_with_tabs,
-    replace_leading_tabs_with_spaces
+    replace_leading_tabs_with_spaces,
+    FILE_ENCODING
 )
 
 
@@ -38,9 +39,9 @@ class UtilTest(unittest.TestCase):
             with self.subTest(datadir=top_dir):
                 editorconfig = json.loads(get_contents(top_dir + 'editorconfig.json'))
                 input = top_dir + 'input.txt'
-                expected = get_contents(top_dir + 'output.txt', no_unicode=True)
+                expected = get_contents(top_dir + 'output.txt', mode='b')
                 old_contents, new_contents = replace_editorconfig(editorconfig, input)
-                self.assertEqual(expected, new_contents)
+                self.assertEqual(expected, new_contents, "Failed in " + top_dir)
 
 
 if __name__ == "__main__":
