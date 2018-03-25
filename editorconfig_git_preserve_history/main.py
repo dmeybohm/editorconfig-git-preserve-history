@@ -61,6 +61,7 @@ def find_and_write_commits():
             print("Error occurred while getting EditorConfig properties")
     # Generate the commits:
     changes_sorted = Change.sort_by_date(changes_by_commit)
+    del changes_by_commit
     for commit, gitinfo, change in changes_sorted:
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
