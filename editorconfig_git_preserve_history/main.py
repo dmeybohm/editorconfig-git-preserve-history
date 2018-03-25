@@ -7,18 +7,24 @@ from typing import Dict
 from editorconfig import get_properties, EditorConfigError
 
 from . import git
-from .change import Change
+from .change import Change, ChangesByCommit, ChangeList
 from .util import run
 from .git import GitCommitInfo
-from .replace import replace_editorconfig
+from .replace import replace_editorconfig, FILE_ENCODING
 
-changes_by_commit = {}  # type: Dict[str, 'Change']
+changes_by_commit = {}  # type: ChangesByCommit
 
 
-def store_changes(change_file: str):
+def store_changes(change_file: str, old_contents: bytes, new_contents: bytes):
+    # TODO: handle \r line separator here:
+    old_str = old_contents.decode(FILE_ENCODING).split("\n")
+    new_str = new_contents.decode(FILE_ENCODING).split("\n")
+
     blame = run(['git', 'blame', change_file])
     for line_number, line in enumerate(blame):
         if len(line) == 0:
+            continue
+        if old_str[line_number] == new_str[line_number]:
             continue
         match = re.match(r'^(\S+)', line)
         if not match:
@@ -36,7 +42,7 @@ def generate_changes(editorconfig: dict, abspath: str, relpath: str):
         # no changes:
         return
     print("Changing " + relpath)
-    store_changes(abspath)
+    store_changes(abspath, old_contents, new_contents)
 
 
 def find_and_write_commits():
@@ -54,9 +60,8 @@ def find_and_write_commits():
         except EditorConfigError:
             print("Error occurred while getting EditorConfig properties")
     # Generate the commits:
-    for commit, change in changes_by_commit.items():
-        # get info for the commit:
-        gitinfo = GitCommitInfo.from_commit(commit)
+    changes_sorted = Change.sort_by_date(changes_by_commit)
+    for commit, gitinfo, change in changes_sorted:
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
             editorconfig = get_properties(change_file)
