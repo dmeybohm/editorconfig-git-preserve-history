@@ -32,7 +32,7 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
     elif end_of_line == "cr":
         raise RuntimeError("Unhandled line ending")
 
-    old_contents = get_contents(file_path, mode='b')
+    old_contents = get_contents(file_path, mode='b') # type: bytes
     lines = get_lines(file_path, encoding=FILE_ENCODING)
     with tempfile.TemporaryFile(mode='w+b') as tmp:
         last_line = len(lines) - 1
@@ -63,7 +63,7 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
                 tmp.write(orig_line.encode(FILE_ENCODING))
 
         tmp.seek(0, 0)
-        new_contents = tmp.read()
+        new_contents = tmp.read()  # type: bytes
         return old_contents, new_contents
 
 
