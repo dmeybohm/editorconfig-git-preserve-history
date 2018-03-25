@@ -1,9 +1,6 @@
 import subprocess
 import locale
-from typing import List
-
-UNICODE_ESCAPING = "surrogateescape"
-ASCII_ENCODING = "ascii"
+from typing import List, AnyStr
 
 
 def run(cmd: List[str], encoding: str = None) -> List[str]:
@@ -17,28 +14,26 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
     return output_str.split("\n")
 
 
-def get_contents(file_path: str, no_unicode: bool = False) -> str:
-    if no_unicode:
-        with open(file_path, "rb") as fb:
-            return fb.read().decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
-    else:
+def get_contents(file_path: str, encoding: str = None) -> str:
+    if encoding is None:
         with open(file_path, "rt") as ft:
+            return ft.read()
+    else:
+        with open(file_path, "rt", encoding=encoding) as ft:
             return ft.read()
 
 
-def get_lines(file_path: str, no_unicode: bool = False) -> List[str]:
-    if no_unicode:
-        with open(file_path, "rt", encoding=ASCII_ENCODING,
-                  errors=UNICODE_ESCAPING) as f:
-            return f.readlines()
-    else:
+def get_lines(file_path: str, encoding: str = None) -> List[str]:
+    if encoding is None:
         with open(file_path, "rt") as f:
             return f.readlines()
+    else:
+        with open(file_path, "rt", encoding=encoding) as f:
+            return f.readlines()
 
 
-def hide_unicode(s: str) -> bytes:
-    return s.encode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
+def get_contents_binary(file_path: str) -> bytes:
+    with open(file_path, "rb") as ft:
+        return ft.read()
 
 
-def unhide_unicode(b: bytes) -> str:
-    return b.decode(ASCII_ENCODING, errors=UNICODE_ESCAPING)
