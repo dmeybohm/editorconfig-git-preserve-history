@@ -3,13 +3,11 @@ import os
 import re
 import sys
 
-from typing import Dict
 from editorconfig import get_properties, EditorConfigError
 
 from . import git
-from .change import Change, ChangesByCommit, ChangeList
+from .change import Change, ChangesByCommit
 from .util import run
-from .git import GitCommitInfo
 from .replace import replace_editorconfig, FILE_ENCODING
 
 changes_by_commit = {}  # type: ChangesByCommit
