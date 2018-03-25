@@ -4,8 +4,8 @@ from typing import List, Dict, Tuple
 
 from editorconfig_git_preserve_history.git import GitCommitInfo
 
-InfoTuple = Tuple[str, GitCommitInfo, 'Change']
-ChangeList = List[InfoTuple]
+GitCommitInfoTuple = Tuple[str, GitCommitInfo, 'Change']
+ChangeList = List[GitCommitInfoTuple]
 ChangesByCommit = Dict[str, 'Change']
 
 
@@ -35,5 +35,5 @@ class Change:
         return result
 
 
-def _sort_func(info: InfoTuple) -> datetime:
+def _sort_func(info: GitCommitInfoTuple) -> datetime:
     return dateutil.parser.parse(info[1].date)
