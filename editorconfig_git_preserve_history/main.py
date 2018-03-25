@@ -68,7 +68,11 @@ def find_and_write_commits():
                                                               change_file,
                                                               line_numbers)
             with open(change_file, 'wb') as f:
-                f.write(new_contents)
+                try:
+                    f.write(new_contents)
+                except IOError as e:
+                    print("Error writing "+change_file)
+                    raise e
         gitinfo.impersonate_and_write_commit(change.files())
 
 

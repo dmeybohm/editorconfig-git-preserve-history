@@ -38,7 +38,7 @@ class GitCommitInfo:
         impersonator_name = run(['git', 'config', 'user.name'])[0]
         message = self.message + "\n\nOriginal-Commit: " + self.commit + "\n" + \
             "Impersonator: {} <{}>".format(impersonator_name, impersonator_email)
-        args = ['git', 'commit', '--date', self.date, '--author', self.author,
+        args = ['git', 'commit', '-n', '--date', self.date, '--author', self.author,
                 '--message', message]
         run(args + files)
 
