@@ -14,14 +14,12 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
     return output_str.split("\n")
 
 
-def get_contents(file_path: str, encoding: str = None, mode: str = None) -> AnyStr:
-    if mode is None:
-        mode = 't'
+def get_contents(file_path: str, encoding: str = None) -> str:
     if encoding is None:
-        with open(file_path, "r" + mode) as ft:
+        with open(file_path, "rt") as ft:
             return ft.read()
     else:
-        with open(file_path, "r" + mode, encoding=encoding) as ft:
+        with open(file_path, "rt", encoding=encoding) as ft:
             return ft.read()
 
 
@@ -32,3 +30,10 @@ def get_lines(file_path: str, encoding: str = None) -> List[str]:
     else:
         with open(file_path, "rt", encoding=encoding) as f:
             return f.readlines()
+
+
+def get_contents_binary(file_path: str) -> bytes:
+    with open(file_path, "rb") as ft:
+        return ft.read()
+
+

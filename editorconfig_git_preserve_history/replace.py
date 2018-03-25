@@ -2,7 +2,7 @@ import re
 import tempfile
 from typing import Dict, Tuple, AnyStr
 
-from .util import get_contents, get_lines
+from .util import get_contents, get_lines, get_contents_binary
 
 
 # We don't do anything with encoding, because we just transform
@@ -11,7 +11,7 @@ FILE_ENCODING = 'latin1'
 
 
 def replace_editorconfig(editorconfig: dict, file_path: str,
-                         lines_to_change: Dict[int, bool] = {}) -> Tuple[AnyStr, AnyStr]:
+                         lines_to_change: Dict[int, bool] = {}) -> Tuple[bytes, bytes]:
     end_of_line = None
     if 'end_of_line' in editorconfig:
         end_of_line = editorconfig['end_of_line']
@@ -32,7 +32,7 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
     elif end_of_line == "cr":
         raise RuntimeError("Unhandled line ending")
 
-    old_contents = get_contents(file_path, mode='b')
+    old_contents = get_contents_binary(file_path)
     lines = get_lines(file_path, encoding=FILE_ENCODING)
     with tempfile.TemporaryFile(mode='w+b') as tmp:
         last_line = len(lines) - 1
@@ -63,7 +63,7 @@ def replace_editorconfig(editorconfig: dict, file_path: str,
                 tmp.write(orig_line.encode(FILE_ENCODING))
 
         tmp.seek(0, 0)
-        new_contents = tmp.read()
+        new_contents = tmp.read()  # type: bytes
         return old_contents, new_contents
 
 

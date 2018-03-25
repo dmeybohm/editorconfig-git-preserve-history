@@ -1,7 +1,7 @@
 import unittest
 import os
 import json
-from editorconfig_git_preserve_history.util import get_contents
+from editorconfig_git_preserve_history.util import get_contents, get_contents_binary
 from editorconfig_git_preserve_history.replace import (
     replace_editorconfig,
     replace_leading_spaces_with_tabs,
@@ -39,7 +39,7 @@ class UtilTest(unittest.TestCase):
             with self.subTest(datadir=top_dir):
                 editorconfig = json.loads(get_contents(top_dir + 'editorconfig.json'))
                 input = top_dir + 'input.txt'
-                expected = get_contents(top_dir + 'output.txt', mode='b')
+                expected = get_contents_binary(top_dir + 'output.txt')
                 old_contents, new_contents = replace_editorconfig(editorconfig, input)
                 self.assertEqual(expected, new_contents, "Failed in " + top_dir)
 
