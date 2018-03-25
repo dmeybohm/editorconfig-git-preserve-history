@@ -63,7 +63,7 @@ def find_and_write_commits():
             old_contents, new_contents = replace_editorconfig(editorconfig,
                                                               change_file,
                                                               line_numbers)
-            with open(change_file, 'w') as f:
+            with open(change_file, 'wb') as f:
                 f.write(new_contents)
         gitinfo.impersonate_and_write_commit(change.files())
 
