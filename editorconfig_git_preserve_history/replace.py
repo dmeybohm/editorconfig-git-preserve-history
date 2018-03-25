@@ -1,6 +1,6 @@
 import re
 import tempfile
-from typing import Dict, Tuple
+from typing import Dict, Tuple, AnyStr
 
 from .util import get_contents, get_lines
 
