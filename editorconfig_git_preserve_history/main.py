@@ -18,7 +18,7 @@ def store_changes(change_file: str, old_contents: bytes, new_contents: bytes):
     old_str = old_contents.decode(FILE_ENCODING).split("\n")
     new_str = new_contents.decode(FILE_ENCODING).split("\n")
 
-    blame = run(['git', 'blame', change_file])
+    blame = run(['git', 'blame', change_file], encoding=FILE_ENCODING)
     for line_number, line in enumerate(blame):
         if len(line) == 0:
             continue
