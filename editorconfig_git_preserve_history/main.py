@@ -3,13 +3,11 @@ import os
 import re
 import sys
 
-from typing import Dict
 from editorconfig import get_properties, EditorConfigError
 
 from . import git
-from .change import Change, ChangesByCommit, ChangeList
+from .change import Change, ChangesByCommit
 from .util import run
-from .git import GitCommitInfo
 from .replace import replace_editorconfig, FILE_ENCODING
 
 changes_by_commit = {}  # type: ChangesByCommit
@@ -61,6 +59,7 @@ def find_and_write_commits():
             print("Error occurred while getting EditorConfig properties")
     # Generate the commits:
     changes_sorted = Change.sort_by_date(changes_by_commit)
+    changes_by_commit.clear() # save memory
     for commit, gitinfo, change in changes_sorted:
         for change_file in change.files():
             line_numbers = change.line_numbers_for_file(change_file)
