@@ -1,4 +1,5 @@
 import dateutil.parser
+from datetime import datetime
 from typing import List, Dict, Tuple
 
 from editorconfig_git_preserve_history.git import GitCommitInfo
@@ -33,5 +34,5 @@ class Change:
         return result
 
 
-def _sort_func(info):
+def _sort_func(info) -> datetime:
     return dateutil.parser.parse(info[1].date)
