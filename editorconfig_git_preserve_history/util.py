@@ -1,9 +1,9 @@
 import subprocess
 import locale
-from typing import List, AnyStr
+from typing import List, AnyStr, Optional
 
 
-def run(cmd: List[str], encoding: str = None) -> List[str]:
+def run(cmd: List[str], encoding: Optional[str] = None) -> List[str]:
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     output = proc.communicate()[0]
     if encoding is None:
@@ -14,7 +14,7 @@ def run(cmd: List[str], encoding: str = None) -> List[str]:
     return output_str.split("\n")
 
 
-def get_contents(file_path: str, encoding: str = None) -> str:
+def get_contents(file_path: str, encoding: Optional[str] = None) -> str:
     if encoding is None:
         with open(file_path, "rt") as ft:
             return ft.read()
@@ -23,7 +23,7 @@ def get_contents(file_path: str, encoding: str = None) -> str:
             return ft.read()
 
 
-def get_lines(file_path: str, encoding: str = None) -> List[str]:
+def get_lines(file_path: str, encoding: Optional[str] = None) -> List[str]:
     if encoding is None:
         with open(file_path, "rt") as f:
             return f.readlines()

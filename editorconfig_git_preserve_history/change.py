@@ -10,18 +10,18 @@ ChangesByCommit = Dict[str, 'Change']
 
 
 class Change:
-    def __init__(self):
+    def __init__(self: Change):
         self.changes = {}  # type: Dict[str, List[int]]
 
-    def add_change(self, file_path: str, line_number: int):
+    def add_change(self: Change, file_path: str, line_number: int):
         if file_path not in self.changes:
             self.changes[file_path] = []
         self.changes[file_path].append(line_number)
 
-    def files(self) -> List[str]:
+    def files(self: Change) -> List[str]:
         return list(self.changes.keys())
 
-    def line_numbers_for_file(self, file_path: str) -> Dict[int, bool]:
+    def line_numbers_for_file(self: Change, file_path: str) -> Dict[int, bool]:
         return {line_number: True for line_number in self.changes[file_path]}
 
     @classmethod

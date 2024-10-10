@@ -44,15 +44,24 @@ class GitCommitInfo:
 
 
 def match_commit(commit_log: str) -> str:
-    return re.search(r'^commit (\S+)', commit_log, re.M).group(1)
+    result = re.search(r'^commit (\S+)', commit_log, re.M)
+    if result is None:
+        raise RuntimeError("Missing commit line")
+    return result.group(1)
 
 
 def match_author(commit_log: str) -> str:
-    return re.search(r'^Author: (.+)', commit_log, re.M).group(1)
+    result = re.search(r'^Author: (.+)', commit_log, re.M)
+    if result is None:
+        raise RuntimeError("Missing author line")
+    return result.group(1)
 
 
 def match_date(commit_log: str) -> str:
-    return re.search(r"^Date: \s*(.*)$", commit_log, re.M).group(1)
+    result = re.search(r"^Date: \s*(.*)$", commit_log, re.M)
+    if result is None:
+        raise RuntimeError("missing date line")
+    return result.group(1)
 
 
 def match_message(commit_log: str) -> str:

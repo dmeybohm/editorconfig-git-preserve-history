@@ -30,7 +30,7 @@ class UtilTest(unittest.TestCase):
 
     def test_replace_leading_tabs_with_spaces(self):
         result = replace_leading_tabs_with_spaces('\t  \tif test:', 4)
-        self.assertEquals((' ' * 8) + '  if test:', result)
+        self.assertEqual((' ' * 8) + '  if test:', result)
 
     def test_replace_editorconfig_test_cases_in_data_dir(self):
         datadir = os.path.dirname(__file__) + '/data/'
