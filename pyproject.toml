@@ -1,5 +1,22 @@
-[build-system]
-requires = ["setuptools>=44", "wheel", "setuptools_scm[toml]>=3.4.3"]
-build-backend = "setuptools.build_meta"
+[tool.poetry]
+name = "editorconfig-git-preserve-history"
+version = "0.2.0"
+description = "Rewrite git history of .editorconfig file while preserving history."
+authors = ["David Meybohm <dmeybohm@gmail.com>"]
+license = "MIT"
+readme = "README.md"
 
-[tool.setuptools_scm]
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.2"
+EditorConfig = "0.12.1"
+urllib3 = "^1.26.19"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8"
+mypy = "^1.10"
+types-python-dateutil = "^2.9.0.20241003"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
